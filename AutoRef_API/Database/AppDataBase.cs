@@ -25,9 +25,11 @@ namespace AutoRef_API.Database
         {
             // Relación entre Partido y Polideportivo
             modelBuilder.Entity<Partido>()
-                .HasOne<Polideportivo>()
-                .WithMany()
-                .HasForeignKey(p => p.LugarId);
+            .HasOne(p => p.Lugar)  // Indica la propiedad de navegación
+            .WithMany()
+            .HasForeignKey(p => p.LugarId)
+            .OnDelete(DeleteBehavior.Cascade); // Ajusta el comportamiento de eliminación
+
 
             // Relación entre Partido y Usuarios
             modelBuilder.Entity<Partido>()

@@ -109,10 +109,13 @@ public class UsuariosController : ControllerBase
         return (0, 0);
     }
 
+    /// <summary>
+    /// Inicia sesión y devuelve un token JWT.
+    /// </summary>
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
-        var user = await _userManager.FindByEmailAsync(model.Email);
+        var user = await _userManager.FindByNameAsync(model.Email);
         if (user == null)
             return Unauthorized(new { message = "Usuario o contraseña incorrectos" });
 
@@ -121,14 +124,91 @@ public class UsuariosController : ControllerBase
             return Unauthorized(new { message = "Usuario o contraseña incorrectos" });
 
         var roles = await _userManager.GetRolesAsync(user);
+
+        // Generar el token JWT
         var token = GenerateJwtToken(user, roles);
 
         return Ok(new
         {
             message = "Inicio de sesión exitoso",
-            token,
-            roles
+            token,   // Agrega el token en la respuesta
+            role = roles.FirstOrDefault() // Devuelve el rol del usuario
         });
+    }
+
+    /// <summary>
+    /// Crea un nuevo rol en el sistema.
+    /// </summary>
+    [Authorize(Roles = "Admin")]
+    [HttpPost("create-role")]
+    public async Task<IActionResult> CreateRole([FromBody] RoleModel model)
+    {
+        if (!await _roleManager.RoleExistsAsync(model.RoleName))
+        {
+            var role = new ApplicationRole { Name = model.RoleName };
+            var result = await _roleManager.CreateAsync(role);
+
+            if (result.Succeeded)
+                return Ok(new { message = "Rol creado con éxito" });
+
+            return BadRequest(result.Errors);
+        }
+
+        return BadRequest(new { message = "El rol ya existe" });
+    }
+
+    /// <summary>
+    /// Asigna un rol a un usuario.
+    /// </summary>
+    [Authorize(Roles = "Admin")]
+    [HttpPost("assign-role")]
+    public async Task<IActionResult> AssignRole([FromBody] AssignRoleModel model)
+    {
+        var user = await _userManager.FindByNameAsync(model.Username);
+        if (user == null)
+            return NotFound(new { message = "Usuario no encontrado" });
+
+        var result = await _userManager.AddToRoleAsync(user, model.RoleName);
+
+        if (result.Succeeded)
+            return Ok(new { message = "Rol asignado con éxito" });
+
+        return BadRequest(result.Errors);
+    }
+
+    /// <summary>
+    /// Obtiene la lista de usuarios con sus roles.
+    /// </summary>
+    //    [Authorize(Roles = "Admin")]
+    [HttpGet]
+    public async Task<IActionResult> GetUsers()
+    {
+        var users = _userManager.Users.ToList();
+        var userList = new List<object>();
+
+        foreach (var user in users)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+            userList.Add(new
+            {
+                user.Id,
+                user.UserName,
+                user.ClubVinculado,
+                user.Licencia,
+                user.Nivel,
+                user.Nombre,
+                user.PrimerApellido,
+                user.SegundoApellido,
+                user.FechaNacimiento,
+                user.FotoPerfil,
+                user.Longitud,
+                user.Latitud,
+                user.Email,
+                Roles = roles
+            });
+        }
+
+        return Ok(userList);
     }
 
     private string GenerateJwtToken(Usuario user, IList<string> roles)

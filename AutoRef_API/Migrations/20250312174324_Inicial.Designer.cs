@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AutoRef_API.Migrations
 {
     [DbContext(typeof(AppDataBase))]
-    [Migration("20250307221206_usuarios")]
-    partial class usuarios
+    [Migration("20250312174324_Inicial")]
+    partial class Inicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -123,9 +123,6 @@ namespace AutoRef_API.Migrations
                     b.Property<Guid>("LugarId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("LugarId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AnotadorId");
@@ -135,8 +132,6 @@ namespace AutoRef_API.Migrations
                     b.HasIndex("Arbitro2Id");
 
                     b.HasIndex("LugarId");
-
-                    b.HasIndex("LugarId1");
 
                     b.ToTable("Partidos");
                 });
@@ -170,18 +165,34 @@ namespace AutoRef_API.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<string>("Ciudad")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ClubVinculado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CodigoPostal")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Direccion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime>("FechaNacimiento")
+                        .HasColumnType("datetime2");
 
                     b.Property<byte[]>("FotoPerfil")
                         .IsRequired()
@@ -216,6 +227,10 @@ namespace AutoRef_API.Migrations
                     b.Property<string>("NormalizedUserName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Pais")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
@@ -226,6 +241,10 @@ namespace AutoRef_API.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("PrimerApellido")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Region")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -240,6 +259,7 @@ namespace AutoRef_API.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -373,15 +393,9 @@ namespace AutoRef_API.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("AutoRef_API.Database.Polideportivo", null)
-                        .WithMany()
-                        .HasForeignKey("LugarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("AutoRef_API.Database.Polideportivo", "Lugar")
                         .WithMany()
-                        .HasForeignKey("LugarId1")
+                        .HasForeignKey("LugarId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

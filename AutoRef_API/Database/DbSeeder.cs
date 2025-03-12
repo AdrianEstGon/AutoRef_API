@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using System;
 using System.Threading.Tasks;
 
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
 public static class DbInitializer
 {
     public static async Task SeedRolesAndAdmin(UserManager<Usuario> userManager, RoleManager<ApplicationRole> roleManager)
@@ -25,7 +27,7 @@ public static class DbInitializer
         {
             adminUser = new Usuario
             {
-                UserName = "adriestrada",
+                UserName = adminEmail,
                 Email = adminEmail,
                 //NombreCompleto = "Super Administrador",
                 EmailConfirmed = true, // Opcional: para evitar confirmaciones
@@ -37,6 +39,11 @@ public static class DbInitializer
                 Licencia = 16409,
                 Latitud = 43.382436,
                 Longitud = -5.558410,
+                Ciudad = "Siero",
+                Pais = "España",
+                Direccion = "Reanes 65 C",
+                Region = "Asturias",
+                CodigoPostal = "33580",
                 FechaNacimiento = new DateTime(2001, 11, 27)
             };
 
@@ -44,14 +51,19 @@ public static class DbInitializer
 
             if (!result.Succeeded)
             {
-                throw new Exception("Error al crear el usuario administrador: " + string.Join(", ", result.Errors));
-            }
-        }
+                Console.WriteLine("❌ Error al crear el usuario administrador:");
+                foreach (var error in result.Errors)
+                {
+                    Console.WriteLine($"➡ {error.Code}: {error.Description}");
+                }
 
-        // 3. Asignar el rol "Admin" al usuario si aún no lo tiene
-        if (!await userManager.IsInRoleAsync(adminUser, adminRole))
-        {
-            await userManager.AddToRoleAsync(adminUser, adminRole);
+                throw new Exception("Error al crear el usuario administrador.");
+            }
+            // 3. Asignar el rol "Admin" al usuario si aún no lo tiene
+            if (!await userManager.IsInRoleAsync(adminUser, adminRole))
+            {
+                await userManager.AddToRoleAsync(adminUser, adminRole);
+            }
         }
     }
 }

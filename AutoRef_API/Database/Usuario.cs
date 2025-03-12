@@ -12,7 +12,6 @@ public class ApplicationRole : IdentityRole
 
 public class Usuario : IdentityUser
 {
-    public string UserName { get; set; }
     public string Email { get; set; }
     public string Nombre { get; set; }
     public string PrimerApellido { get; set; }

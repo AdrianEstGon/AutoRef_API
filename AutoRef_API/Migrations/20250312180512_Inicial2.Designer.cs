@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AutoRef_API.Migrations
 {
     [DbContext(typeof(AppDataBase))]
-    [Migration("20250312005719_modelUsuarios3")]
-    partial class modelUsuarios3
+    [Migration("20250312180512_Inicial2")]
+    partial class Inicial2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -123,9 +123,6 @@ namespace AutoRef_API.Migrations
                     b.Property<Guid>("LugarId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("LugarId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AnotadorId");
@@ -135,8 +132,6 @@ namespace AutoRef_API.Migrations
                     b.HasIndex("Arbitro2Id");
 
                     b.HasIndex("LugarId");
-
-                    b.HasIndex("LugarId1");
 
                     b.ToTable("Partidos");
                 });
@@ -397,15 +392,9 @@ namespace AutoRef_API.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("AutoRef_API.Database.Polideportivo", null)
-                        .WithMany()
-                        .HasForeignKey("LugarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("AutoRef_API.Database.Polideportivo", "Lugar")
                         .WithMany()
-                        .HasForeignKey("LugarId1")
+                        .HasForeignKey("LugarId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

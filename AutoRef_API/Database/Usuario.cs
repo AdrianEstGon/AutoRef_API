@@ -12,16 +12,21 @@ public class ApplicationRole : IdentityRole
 
 public class Usuario : IdentityUser
 {
+    public string UserName { get; set; }
+    public string Email { get; set; }
     public string Nombre { get; set; }
     public string PrimerApellido { get; set; }
     public string SegundoApellido { get; set; }
+    public DateTime FechaNacimiento { get; set; }
+    public string Nivel { get; set; }
     public string ClubVinculado { get; set; }
     public int Licencia { get; set; }
-    public string Nivel { get; set; }
-    public DateTime FechaNacimiento { get; set; }
-
-    // Coordenadas en latitud y longitud
-    public double Latitud { get; set; }
+    public string Direccion { get; set; }
+    public string Pais { get; set; }
+    public string Region { get; set; }
+    public string Ciudad { get; set; }
+    public string CodigoPostal { get; set; }
+    public double Latitud { get; set; }  // Se obtiene con Google Maps API
     public double Longitud { get; set; }
     // Propiedad para la foto de perfil (almacenada como un array de bytes)
     public byte[] FotoPerfil { get; set; }

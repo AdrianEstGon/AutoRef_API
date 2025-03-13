@@ -1,4 +1,5 @@
 using AutoRef_API.Database;
+using AutoRef_API.Services;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -42,8 +43,16 @@ public class UsuariosController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterModel model)
     {
+        var userExistente = await _userManager.FindByEmailAsync(model.Email);
+        if (userExistente != null)
+        {
+            return BadRequest(new { message = "El correo electrónico ya está registrado" });
+        }
         // Obtener las coordenadas (geolocalización)
         var coordenadas = await ObtenerCoordenadas(model.Direccion, model.Ciudad, model.Pais);
+
+        // Generar la contraseña
+        var contraseñaGenerada = GenerarContraseña(model.Nombre); // Usa la función para generar la contraseña
 
         // Crear el objeto Usuario
         var user = new Usuario
@@ -67,13 +76,15 @@ public class UsuariosController : ControllerBase
         };
 
         // Registrar el usuario
-        var result = await _userManager.CreateAsync(user, model.Password);
+        var result = await _userManager.CreateAsync(user, contraseñaGenerada);
 
         if (result.Succeeded)
         {
-            // Asigna "Admin" si EsAdmin es true
+            // Enviar la contraseña por correo
+            var mailService = new MailService();  // Crear instancia del servicio de correo
+            await mailService.SendEmailAsync(model.Email, "Tu nueva contraseña", $"Hola {model.Nombre},\n\nTu nueva contraseña es: {contraseñaGenerada}\n\nSaludos!");
 
-            // Agregar el rol al usuario
+            // Asigna "Admin" si EsAdmin es true
             if (model.EsAdmin)
             {
                 var role = "Admin";
@@ -87,10 +98,39 @@ public class UsuariosController : ControllerBase
         return BadRequest(result.Errors);
     }
 
+    // Función para generar una contraseña aleatoria (con símbolos, letras y números)
+    private string GenerarContraseña(string nombre)
+    {
+        var random = new Random();
+        var longitud = 12; // Longitud de la contraseña
+        var caracteres = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-+=<>?/";
+        var contrasena = new StringBuilder();
+
+        // Agregar al menos una letra mayúscula, una minúscula, un número y un símbolo
+        contrasena.Append(nombre.Substring(0, 1).ToUpper()); // Usar la primera letra del nombre en mayúscula
+        contrasena.Append('a'); // Garantizar que haya una letra minúscula
+        contrasena.Append('1'); // Garantizar que haya un número
+        contrasena.Append('!'); // Garantizar que haya un símbolo
+
+        // Generar el resto de la contraseña
+        for (int i = contrasena.Length; i < longitud; i++)
+        {
+            contrasena.Append(caracteres[random.Next(caracteres.Length)]);
+        }
+
+        // Barajar la contraseña para que no siempre sea en el mismo orden
+        var contrasenaFinal = contrasena.ToString().ToCharArray();
+        random.Shuffle(contrasenaFinal);
+
+        return new string(contrasenaFinal);
+    }
+
+
+
     private async Task<(double Latitud, double Longitud)> ObtenerCoordenadas(string direccion, string ciudad, string pais)
     {
         var direccionCompleta = $"{direccion}, {ciudad}, {pais}";
-        var url = $"https://maps.googleapis.com/maps/api/geocode/json?address={Uri.EscapeDataString(direccionCompleta)}&key={GoogleMapsApiKey}";
+        var url = $"https://maps.googleapis.com/maps/api/geocode/json?address={Uri.EscapeDataString(direccionCompleta)}&key=AIzaSyC24LaFVU6RgtEswKeAvrryUFBg7CBgONQ";
 
         var response = await _httpClient.GetAsync(url);
         if (!response.IsSuccessStatusCode)
@@ -210,6 +250,26 @@ public class UsuariosController : ControllerBase
 
         return Ok(userList);
     }
+
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteUser(string id)
+    {
+        var user = await _userManager.FindByIdAsync(id);
+        if (user == null)
+        {
+            return NotFound(new { message = "Usuario no encontrado" });
+        }
+
+        var result = await _userManager.DeleteAsync(user);
+        if (result.Succeeded)
+        {
+            return Ok(new { message = "Usuario eliminado con éxito" });
+        }
+
+        return BadRequest(new { message = "Error al eliminar el usuario", errors = result.Errors });
+    }
+
 
     private string GenerateJwtToken(Usuario user, IList<string> roles)
     {

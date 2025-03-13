@@ -50,6 +50,11 @@ public class Usuario : IdentityUser
         Nivel = string.Empty;
         FotoPerfil = Array.Empty<byte>();
         FechaNacimiento = DateTime.Now;
+        Ciudad = string.Empty;
+        Pais = string.Empty;
+        Region = string.Empty;
+        Direccion = string.Empty;
+        CodigoPostal = string.Empty;
         Latitud = 0;
         Longitud = 0;
     }

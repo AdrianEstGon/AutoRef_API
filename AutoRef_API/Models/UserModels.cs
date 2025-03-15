@@ -18,9 +18,42 @@
     public bool EsAdmin { get; set; } // Para indicar si el usuario debe tener rol Admin
 }
 
+public class UpdateModel
+{
+    public string Id { get; set; }
+    public string Username { get; set; }
+    public string Email { get; set; }
+    public string Nombre { get; set; }
+    public string PrimerApellido { get; set; }
+    public string SegundoApellido { get; set; }
+    public DateTime FechaNacimiento { get; set; }
+    public string Nivel { get; set; }
+    public string ClubVinculado { get; set; }
+    public int Licencia { get; set; }
+    public string Direccion { get; set; }
+    public string Pais { get; set; }
+    public string Region { get; set; }
+    public string Ciudad { get; set; }
+    public string CodigoPostal { get; set; }
+
+    public List<string> Roles { get; set; }
+
+    public double Latitud { get; set; }
+    public double Longitud { get; set; }
+    public byte[] FotoPerfil { get; set; }
+    public bool EsAdmin { get; set; } // Para indicar si el usuario debe tener rol Admin
+}
+
+public class ChangePasswordModel
+{
+    public string OldPassword { get; set; }
+    public string NewPassword { get; set; }
+}
+
 
 public class LoginModel
 {
+
     public string Email { get; set; }
     public string Password { get; set; }
 }

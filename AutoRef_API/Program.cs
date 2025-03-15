@@ -5,13 +5,27 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 
 using System.Text;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+
+var cloudinarySettings = builder.Configuration.GetSection("CloudinarySettings");
+var cloudinaryAccount = new Account(
+    cloudinarySettings["CloudName"],
+    cloudinarySettings["ApiKey"],
+    cloudinarySettings["ApiSecret"]
+);
+
+var cloudinary = new Cloudinary(cloudinaryAccount);
+
+builder.Services.AddSingleton(cloudinary);
 
 // Configura la conexión a la base de datos
 builder.Services.AddDbContext<AppDataBase>(options =>

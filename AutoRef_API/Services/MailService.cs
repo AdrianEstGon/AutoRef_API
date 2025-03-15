@@ -15,7 +15,7 @@ public class MailService
     public async Task SendEmailAsync(string toEmail, string subject, string body)
     {
         var message = new MimeMessage();
-        message.From.Add(new MailboxAddress("Administrador", _smtpUsername));
+        message.From.Add(new MailboxAddress("AutoRef", _smtpUsername));
         message.To.Add(new MailboxAddress("User", toEmail));
         message.Subject = subject;
 

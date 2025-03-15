@@ -28,7 +28,7 @@ public class Usuario : IdentityUser
     public double Latitud { get; set; }  // Se obtiene con Google Maps API
     public double Longitud { get; set; }
     // Propiedad para la foto de perfil (almacenada como un array de bytes)
-    public byte[] FotoPerfil { get; set; }
+    public string FotoPerfil { get; set; }
 
     // Propiedad para la ubicación (tipo GEOGRAPHY)
     public SqlGeography Ubicacion
@@ -48,7 +48,7 @@ public class Usuario : IdentityUser
         //Clave = string.Empty;
         ClubVinculado = string.Empty;
         Nivel = string.Empty;
-        FotoPerfil = Array.Empty<byte>();
+        FotoPerfil = string.Empty;
         FechaNacimiento = DateTime.Now;
         Ciudad = string.Empty;
         Pais = string.Empty;

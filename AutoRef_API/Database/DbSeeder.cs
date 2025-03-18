@@ -35,7 +35,7 @@ public static class DbInitializer
                 PrimerApellido = "Estrada",
                 SegundoApellido = "González",
                 Nivel = "Nivel II + Hab. Nacional C Pista",
-                ClubVinculado = "Club Voleibol Oviedo",
+                ClubVinculado = "CLUB VOLEIBOL OVIEDO",
                 Licencia = 16409,
                 Latitud = 43.382436,
                 Longitud = -5.558410,

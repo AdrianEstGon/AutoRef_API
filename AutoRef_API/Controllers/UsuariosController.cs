@@ -227,7 +227,7 @@ public class UsuariosController : ControllerBase
     /// <summary>
     /// Obtiene la lista de usuarios con sus roles.
     /// </summary>
-    //    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<IActionResult> GetUsers()
     {
@@ -300,7 +300,6 @@ public class UsuariosController : ControllerBase
         });
     }
 
-
     [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(string id)
@@ -311,14 +310,25 @@ public class UsuariosController : ControllerBase
             return NotFound(new { message = "Usuario no encontrado" });
         }
 
+        // Obtener los roles asignados al usuario
+        var roles = await _userManager.GetRolesAsync(user);
+
+        // Remover cada rol asignado
+        foreach (var role in roles)
+        {
+            await _userManager.RemoveFromRoleAsync(user, role);
+        }
+
+        // Eliminar el usuario
         var result = await _userManager.DeleteAsync(user);
         if (result.Succeeded)
         {
-            return Ok(new { message = "Usuario eliminado con éxito" });
+            return Ok(new { message = "Usuario y roles eliminados con éxito" });
         }
 
         return BadRequest(new { message = "Error al eliminar el usuario", errors = result.Errors });
     }
+
 
     [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]

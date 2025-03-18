@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoRef_API.Database;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AutoRef_API.Controllers
 {
@@ -19,12 +20,27 @@ namespace AutoRef_API.Controllers
             _context = context;
         }
 
-        // GET: api/Polideportivos
+        [Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Polideportivo>>> GetPolideportivos()
+        public async Task<IActionResult> GetPolideportivos()
         {
-            return await _context.Polideportivos.ToListAsync();
+            var polideportivos = await _context.Polideportivos.ToListAsync();
+            var polideportivosList = new List<object>();
+
+            foreach (var polideportivo in polideportivos)
+            {
+                polideportivosList.Add(new
+                {
+                    polideportivo.Id,
+                    polideportivo.Nombre,
+                    polideportivo.Latitud,
+                    polideportivo.Longitud
+                });
+            }
+
+            return Ok(polideportivosList);
         }
+
 
         // GET: api/Polideportivos/5
         [HttpGet("{id}")]

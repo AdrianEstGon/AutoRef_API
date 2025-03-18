@@ -31,24 +31,26 @@ namespace AutoRef_API.Database
             .OnDelete(DeleteBehavior.Cascade); // Ajusta el comportamiento de eliminación
 
 
-            // Relación entre Partido y Usuarios
             modelBuilder.Entity<Partido>()
                 .HasOne(p => p.Arbitro1)
                 .WithMany()
                 .HasForeignKey(p => p.Arbitro1Id)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);  // Permitir que Arbitro1 sea null
 
             modelBuilder.Entity<Partido>()
                 .HasOne(p => p.Arbitro2)
                 .WithMany()
                 .HasForeignKey(p => p.Arbitro2Id)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);  // Permitir que Arbitro2 sea null
 
             modelBuilder.Entity<Partido>()
                 .HasOne(p => p.Anotador)
                 .WithMany()
                 .HasForeignKey(p => p.AnotadorId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);  // Permitir que Anotador sea null
 
             // Relación entre Disponibilidad y Usuario
             modelBuilder.Entity<Disponibilidad>()

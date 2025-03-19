@@ -15,6 +15,12 @@ namespace AutoRef_API.Database
         public DbSet<Polideportivo> Polideportivos { get; set; }
         public DbSet<Disponibilidad> Disponibilidades { get; set; }
 
+        public DbSet<Equipo> Equipos { get; set; }
+
+        public DbSet<Club> Clubs { get; set; }
+
+        public DbSet<Categoria> Categorias { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             //optionsBuilder.UseSqlServer("Server=DESKTOP-TGGO9RR\\SQLEXPRESS;Database=AutoRef;Trusted_Connection=True;TrustServerCertificate=True;");
@@ -28,6 +34,17 @@ namespace AutoRef_API.Database
             .HasOne(p => p.Lugar)  // Indica la propiedad de navegación
             .WithMany()
             .HasForeignKey(p => p.LugarId)
+            .OnDelete(DeleteBehavior.Cascade) // Ajusta el comportamiento de eliminación
+            .IsRequired(false);   // Permitir que Lugar sea null
+
+
+            modelBuilder.Entity<Usuario>().ToTable("Usuarios");
+
+            // Relación entre Equipo y Club
+            modelBuilder.Entity<Equipo>()
+            .HasOne(e => e.Club)  // Indica la propiedad de navegación
+            .WithMany()
+            .HasForeignKey(e => e.ClubId)
             .OnDelete(DeleteBehavior.Cascade); // Ajusta el comportamiento de eliminación
 
 

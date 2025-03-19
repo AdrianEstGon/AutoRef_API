@@ -4,6 +4,7 @@ using AutoRef_API.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AutoRef_API.Migrations
 {
     [DbContext(typeof(AppDataBase))]
-    partial class AppDataBaseModelSnapshot : ModelSnapshot
+    [Migration("20250318200123_NombreUsuarios")]
+    partial class NombreUsuarios
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,7 +170,7 @@ namespace AutoRef_API.Migrations
                     b.Property<int>("Jornada")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("LugarId")
+                    b.Property<Guid>("LugarId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("NumeroPartido")
@@ -453,7 +456,8 @@ namespace AutoRef_API.Migrations
                     b.HasOne("AutoRef_API.Database.Polideportivo", "Lugar")
                         .WithMany()
                         .HasForeignKey("LugarId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Anotador");
 

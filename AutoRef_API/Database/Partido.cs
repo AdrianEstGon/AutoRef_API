@@ -6,7 +6,7 @@ using System;
 public class Partido
 {
     public Guid Id { get; private set; }
-    public Guid LugarId { get; set; }
+    public Guid? LugarId { get; set; }
     public string Arbitro1Id { get; set; }
     public string Arbitro2Id { get; set; }
     public string AnotadorId { get; set; }
@@ -15,7 +15,9 @@ public class Partido
     public string EquipoLocal { get; set; }
     public string EquipoVisitante { get; set; }
     public string Categoria { get; set; }
-    public string Competicion { get; set; }
+    public int Jornada { get; set; }
+    public int NumeroPartido { get; set; }
+
 
 
 

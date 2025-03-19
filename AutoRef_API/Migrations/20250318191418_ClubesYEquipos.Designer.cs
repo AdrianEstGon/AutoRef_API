@@ -4,6 +4,7 @@ using AutoRef_API.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AutoRef_API.Migrations
 {
     [DbContext(typeof(AppDataBase))]
-    partial class AppDataBaseModelSnapshot : ModelSnapshot
+    [Migration("20250318191418_ClubesYEquipos")]
+    partial class ClubesYEquipos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,21 +44,6 @@ namespace AutoRef_API.Migrations
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("AutoRef_API.Database.Categoria", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categorias");
-                });
-
             modelBuilder.Entity("AutoRef_API.Database.Club", b =>
                 {
                     b.Property<Guid>("Id")
@@ -68,7 +56,7 @@ namespace AutoRef_API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Clubs");
+                    b.ToTable("Club");
                 });
 
             modelBuilder.Entity("AutoRef_API.Database.Disponibilidad", b =>
@@ -113,12 +101,12 @@ namespace AutoRef_API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Categoria")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid>("ClubId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Competicion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -128,7 +116,7 @@ namespace AutoRef_API.Migrations
 
                     b.HasIndex("ClubId");
 
-                    b.ToTable("Equipos");
+                    b.ToTable("Equipo");
                 });
 
             modelBuilder.Entity("AutoRef_API.Database.Partido", b =>
@@ -167,7 +155,7 @@ namespace AutoRef_API.Migrations
                     b.Property<int>("Jornada")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("LugarId")
+                    b.Property<Guid>("LugarId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("NumeroPartido")
@@ -313,7 +301,7 @@ namespace AutoRef_API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Usuarios", (string)null);
+                    b.ToTable("Usuario");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -453,7 +441,8 @@ namespace AutoRef_API.Migrations
                     b.HasOne("AutoRef_API.Database.Polideportivo", "Lugar")
                         .WithMany()
                         .HasForeignKey("LugarId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Anotador");
 

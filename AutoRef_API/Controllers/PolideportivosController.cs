@@ -56,6 +56,38 @@ namespace AutoRef_API.Controllers
             return polideportivo;
         }
 
+        [HttpGet("name/{name}")]
+        public async Task<IActionResult> GetPolideportivoByName(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return BadRequest("El nombre no puede estar vacío.");
+            }
+
+            // Realizamos la búsqueda insensible a mayúsculas
+            var polideportivo = await _context.Polideportivos
+                .Where(p => p.Nombre.ToLower() == name.ToLower())
+                .FirstOrDefaultAsync();
+
+            if (polideportivo == null)
+            {
+                return NotFound($"No se encontró un polideportivo con el nombre '{name}'.");
+            }
+
+            // Devolvemos el polideportivo con los campos relevantes
+            var result = new
+            {
+                polideportivo.Id,
+                polideportivo.Nombre,
+                polideportivo.Latitud,
+                polideportivo.Longitud
+            };
+
+            return Ok(result);
+        }
+
+
+
         // PUT: api/Polideportivos/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPolideportivo(Guid id, Polideportivo polideportivo)

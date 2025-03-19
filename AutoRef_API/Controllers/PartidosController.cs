@@ -48,10 +48,11 @@ namespace AutoRef_API.Controllers
                     partido.EquipoVisitante,
                     partido.Fecha,
                     partido.Hora,
-                    Lugar = partido.Lugar.Nombre,  // Mostrar el nombre del lugar (Polideportivo)
-                    LugarId = partido.LugarId,
-                    Categoria = partido.Categoria,
-                    Competicion = partido.Competicion,
+                    Lugar = partido.Lugar?.Nombre,  // Mostrar el nombre del lugar (Polideportivo)
+                    partido.LugarId,
+                    partido.Categoria,
+                    partido.Jornada,
+                    partido.NumeroPartido,
                     Arbitro1 = new
                     {
                         partido.Arbitro1?.Nombre,  
@@ -149,15 +150,33 @@ namespace AutoRef_API.Controllers
                 EquipoLocal = partidoModel.EquipoLocal,
                 EquipoVisitante = partidoModel.EquipoVisitante,
                 Categoria = partidoModel.Categoria,
-                Competicion = partidoModel.Competicion
+                Jornada = partidoModel.Jornada,
+                NumeroPartido = partidoModel.NumeroPartido
             };
 
             // Guardar el partido en la base de datos
             _context.Partidos.Add(partido);
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Partido creado exitosamente", partido });
+            return Ok(new { message = "Partido creado con éxito", partido });
         }
+
+        // DELETE: api/Partidos/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePartido(Guid id)
+        {
+            var partido = await _context.Partidos.FindAsync(id);
+            if (partido == null)
+            {
+                return NotFound(new { message = "El partido no existe." });
+            }
+
+            _context.Partidos.Remove(partido);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Partido eliminado con éxito." });
+        }
+
 
 
 

@@ -4,6 +4,7 @@ using AutoRef_API.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AutoRef_API.Migrations
 {
     [DbContext(typeof(AppDataBase))]
-    partial class AppDataBaseModelSnapshot : ModelSnapshot
+    [Migration("20250319223401_EquiposYCategorias")]
+    partial class EquiposYCategorias
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -108,8 +111,9 @@ namespace AutoRef_API.Migrations
                     b.Property<int>("Franja4")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("UsuarioId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("UsuarioId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -149,23 +153,26 @@ namespace AutoRef_API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AnotadorId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AnotadorId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid?>("Arbitro1Id")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Arbitro1Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid?>("Arbitro2Id")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Arbitro2Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid?>("CategoriaId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Categoria")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("EquipoLocalId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("EquipoLocal")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("EquipoVisitanteId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("EquipoVisitante")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2");
@@ -189,12 +196,6 @@ namespace AutoRef_API.Migrations
                     b.HasIndex("Arbitro1Id");
 
                     b.HasIndex("Arbitro2Id");
-
-                    b.HasIndex("CategoriaId");
-
-                    b.HasIndex("EquipoLocalId");
-
-                    b.HasIndex("EquipoVisitanteId");
 
                     b.HasIndex("LugarId");
 
@@ -224,9 +225,8 @@ namespace AutoRef_API.Migrations
 
             modelBuilder.Entity("AutoRef_API.Database.Usuario", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -431,7 +431,9 @@ namespace AutoRef_API.Migrations
                 {
                     b.HasOne("AutoRef_API.Database.Usuario", "Usuario")
                         .WithMany()
-                        .HasForeignKey("UsuarioId");
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Usuario");
                 });
@@ -470,20 +472,6 @@ namespace AutoRef_API.Migrations
                         .HasForeignKey("Arbitro2Id")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("AutoRef_API.Database.Categoria", "Categoria")
-                        .WithMany()
-                        .HasForeignKey("CategoriaId");
-
-                    b.HasOne("AutoRef_API.Database.Equipo", "EquipoLocal")
-                        .WithMany()
-                        .HasForeignKey("EquipoLocalId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("AutoRef_API.Database.Equipo", "EquipoVisitante")
-                        .WithMany()
-                        .HasForeignKey("EquipoVisitanteId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("AutoRef_API.Database.Polideportivo", "Lugar")
                         .WithMany()
                         .HasForeignKey("LugarId")
@@ -494,12 +482,6 @@ namespace AutoRef_API.Migrations
                     b.Navigation("Arbitro1");
 
                     b.Navigation("Arbitro2");
-
-                    b.Navigation("Categoria");
-
-                    b.Navigation("EquipoLocal");
-
-                    b.Navigation("EquipoVisitante");
 
                     b.Navigation("Lugar");
                 });

@@ -1,0 +1,145 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoRef_API.Database;
+using Microsoft.AspNetCore.Authorization;
+
+namespace AutoRef_API.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CategoriasController : ControllerBase
+    {
+        private readonly AppDataBase _context;
+
+        public CategoriasController(AppDataBase context)
+        {
+            _context = context;
+        }
+
+        // GET: api/Categorias
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IActionResult> GetCategorias()
+        {
+            var categorias = await _context.Categorias.ToListAsync();
+            var categoriasList = new List<object>();
+
+            foreach (var categoria in categorias)
+            {
+                categoriasList.Add(new
+                {
+                    categoria.Id,
+                    categoria.Nombre
+                });
+            }
+
+            return Ok(categoriasList);
+        }
+
+        // GET: api/Categorias/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Categoria>> GetCategoria(Guid id)
+        {
+            var categoria = await _context.Categorias.FindAsync(id);
+
+            if (categoria == null)
+            {
+                return NotFound();
+            }
+
+            return categoria;
+        }
+
+        // GET: api/Categorias/name/{name}
+        [HttpGet("name/{name}")]
+        public async Task<IActionResult> GetCategoriaByName(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return BadRequest("El nombre no puede estar vacío.");
+            }
+
+            var categoria = await _context.Categorias
+                .Where(c => c.Nombre.ToLower() == name.ToLower())
+                .FirstOrDefaultAsync();
+
+            if (categoria == null)
+            {
+                return NotFound($"No se encontró una categoría con el nombre '{name}'.");
+            }
+
+            var result = new
+            {
+                categoria.Id,
+                categoria.Nombre
+            };
+
+            return Ok(result);
+        }
+
+        // PUT: api/Categorias/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutCategoria(Guid id, Categoria categoria)
+        {
+            if (id != categoria.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(categoria).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CategoriaExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // POST: api/Categorias
+        [HttpPost]
+        public async Task<ActionResult<Categoria>> PostCategoria(Categoria categoria)
+        {
+            _context.Categorias.Add(categoria);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetCategoria", new { id = categoria.Id }, categoria);
+        }
+
+        // DELETE: api/Categorias/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCategoria(Guid id)
+        {
+            var categoria = await _context.Categorias.FindAsync(id);
+            if (categoria == null)
+            {
+                return NotFound();
+            }
+
+            _context.Categorias.Remove(categoria);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool CategoriaExists(Guid id)
+        {
+            return _context.Categorias.Any(c => c.Id == id);
+        }
+    }
+}

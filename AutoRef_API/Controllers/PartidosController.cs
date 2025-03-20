@@ -147,9 +147,9 @@ namespace AutoRef_API.Controllers
                 AnotadorId = null,  // Asignar null al anotador si es necesario
                 Fecha = fechaHoraPartido,  // Combinar fecha y hora en DateTime
                 Hora = horaPartido, // Solo la hora como TimeSpan
-                EquipoLocal = partidoModel.EquipoLocal,
-                EquipoVisitante = partidoModel.EquipoVisitante,
-                Categoria = partidoModel.Categoria,
+                EquipoLocalId = partidoModel.EquipoLocalId,
+                EquipoVisitanteId = partidoModel.EquipoVisitanteId,
+                CategoriaId = partidoModel.CategoriaId,
                 Jornada = partidoModel.Jornada,
                 NumeroPartido = partidoModel.NumeroPartido
             };

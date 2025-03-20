@@ -47,6 +47,26 @@ namespace AutoRef_API.Database
             .HasForeignKey(e => e.ClubId)
             .OnDelete(DeleteBehavior.Cascade); // Ajusta el comportamiento de eliminación
 
+            // Relación entre Equipo y Categoria
+            modelBuilder.Entity<Equipo>()
+            .HasOne(e => e.Categoria)  // Indica la propiedad de navegación
+            .WithMany()
+            .HasForeignKey(e => e.CategoriaId)
+            .OnDelete(DeleteBehavior.Cascade); // Ajusta el comportamiento de eliminación
+
+            modelBuilder.Entity<Partido>()
+               .HasOne(p => p.EquipoLocal)
+               .WithMany()
+               .HasForeignKey(p => p.EquipoLocalId)
+               .OnDelete(DeleteBehavior.Restrict)
+               .IsRequired(false);  // Permitir que EquipoLocal sea null
+
+            modelBuilder.Entity<Partido>()
+               .HasOne(p => p.EquipoVisitante)
+               .WithMany()
+               .HasForeignKey(p => p.EquipoVisitanteId)
+               .OnDelete(DeleteBehavior.Restrict)
+               .IsRequired(false);  // Permitir que Arbitro1 sea null
 
             modelBuilder.Entity<Partido>()
                 .HasOne(p => p.Arbitro1)

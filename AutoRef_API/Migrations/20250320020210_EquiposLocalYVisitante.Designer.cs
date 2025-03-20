@@ -4,6 +4,7 @@ using AutoRef_API.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AutoRef_API.Migrations
 {
     [DbContext(typeof(AppDataBase))]
-    partial class AppDataBaseModelSnapshot : ModelSnapshot
+    [Migration("20250320020210_EquiposLocalYVisitante")]
+    partial class EquiposLocalYVisitante
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -158,8 +161,9 @@ namespace AutoRef_API.Migrations
                     b.Property<Guid?>("Arbitro2Id")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CategoriaId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Categoria")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("EquipoLocalId")
                         .HasColumnType("uniqueidentifier");
@@ -189,8 +193,6 @@ namespace AutoRef_API.Migrations
                     b.HasIndex("Arbitro1Id");
 
                     b.HasIndex("Arbitro2Id");
-
-                    b.HasIndex("CategoriaId");
 
                     b.HasIndex("EquipoLocalId");
 
@@ -470,10 +472,6 @@ namespace AutoRef_API.Migrations
                         .HasForeignKey("Arbitro2Id")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("AutoRef_API.Database.Categoria", "Categoria")
-                        .WithMany()
-                        .HasForeignKey("CategoriaId");
-
                     b.HasOne("AutoRef_API.Database.Equipo", "EquipoLocal")
                         .WithMany()
                         .HasForeignKey("EquipoLocalId")
@@ -494,8 +492,6 @@ namespace AutoRef_API.Migrations
                     b.Navigation("Arbitro1");
 
                     b.Navigation("Arbitro2");
-
-                    b.Navigation("Categoria");
 
                     b.Navigation("EquipoLocal");
 

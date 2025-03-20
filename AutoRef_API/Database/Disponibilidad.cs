@@ -7,7 +7,7 @@ using AutoRef_API.Enum;
 public class Disponibilidad
 {
     public Guid Id { get; private set; }
-    public string UsuarioId { get; set; }
+    public Guid? UsuarioId { get; set; }
     public DateTime Fecha { get; set; }
     public FranjaDisponibilidad Franja1 { get; set; }
     public FranjaDisponibilidad Franja2 { get; set; }

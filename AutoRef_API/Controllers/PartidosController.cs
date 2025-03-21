@@ -100,14 +100,28 @@ namespace AutoRef_API.Controllers
 
         // PUT: api/Partidos/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePartido(Guid id, Partido partido)
+        public async Task<IActionResult> UpdatePartido(Guid id, [FromBody] UpdatePartidoModel partidoModel)
         {
-            if (id != partido.Id)
+            if (id != partidoModel.Id)
             {
-                return BadRequest();
+                return BadRequest(new { message = "El ID del partido no coincide." });
             }
 
-            _context.Entry(partido).State = EntityState.Modified;
+            var partido = await _context.Partidos.FindAsync(id);
+            if (partido == null)
+            {
+                return NotFound(new { message = "El partido no existe." });
+            }
+
+            // Actualizar propiedades del partido con los datos recibidos
+            partido.EquipoLocalId = partidoModel.EquipoLocalId;
+            partido.EquipoVisitanteId = partidoModel.EquipoVisitanteId;
+            partido.Fecha = partidoModel.Fecha;
+            partido.Hora = TimeSpan.Parse(partidoModel.Hora);
+            partido.LugarId = partidoModel.LugarId;
+            partido.CategoriaId = partidoModel.CategoriaId;
+            partido.Jornada = partidoModel.Jornada;
+            partido.NumeroPartido = partidoModel.NumeroPartido;
 
             try
             {
@@ -125,8 +139,9 @@ namespace AutoRef_API.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(new { message = "Partido actualizado con éxito." });
         }
+
 
         [HttpPost("crearPartido")]
         public async Task<IActionResult> CrearPartido([FromBody] PartidoModel partidoModel)

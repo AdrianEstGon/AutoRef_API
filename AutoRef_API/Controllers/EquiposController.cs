@@ -99,6 +99,35 @@
             return Ok(equiposList); // Siempre devolver una respuesta Ok con una lista vacía si no hay equipos
         }
 
+        // GET: api/Equipos/search?name=NombreEquipo&categoriaId=CategoriaId
+        [HttpGet("name/{name}/categoria/{categoria}")]
+        public async Task<IActionResult> GetEquipoByNameAndCategoria(string name, string categoria)
+        {
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(categoria))
+            {
+                return BadRequest("El nombre y la categoría no pueden estar vacíos.");
+            }
+
+            var equipo = await _context.Equipos
+                .Include(e => e.Categoria) // Incluye la navegación a la categoría si tienes la relación configurada
+                .Where(e => e.Nombre.ToLower() == name.ToLower() && e.Categoria.Nombre.ToLower() == categoria.ToLower())
+                .FirstOrDefaultAsync();
+
+            if (equipo == null)
+            {
+                return Ok(new { }); // Devuelve un objeto vacío si no existe
+            }
+
+            return Ok(new
+            {
+                equipo.Id,
+                equipo.Nombre,
+                equipo.ClubId,
+                equipo.CategoriaId
+            });
+        }
+
+
 
         // PUT: api/Equipos/5
         [HttpPut("{id}")]

@@ -2,92 +2,97 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
+using System;
+
 namespace AutoRef_API.Database
 {
-    public class AppDataBase : IdentityDbContext<Usuario, ApplicationRole, string>
+    public class AppDataBase : IdentityDbContext<Usuario, ApplicationRole, Guid>
     {
         public AppDataBase(DbContextOptions<AppDataBase> options)
              : base(options)
         {
         }
+
         public DbSet<Partido> Partidos { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Polideportivo> Polideportivos { get; set; }
         public DbSet<Disponibilidad> Disponibilidades { get; set; }
-
         public DbSet<Equipo> Equipos { get; set; }
-
         public DbSet<Club> Clubs { get; set; }
-
         public DbSet<Categoria> Categorias { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            //optionsBuilder.UseSqlServer("Server=DESKTOP-TGGO9RR\\SQLEXPRESS;Database=AutoRef;Trusted_Connection=True;TrustServerCertificate=True;");
-
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder); // Asegura la configuración de Identity
+
+            // Configurar claves GUID
+            modelBuilder.Entity<Usuario>().Property(u => u.Id).HasDefaultValueSql("NEWSEQUENTIALID()");
+            modelBuilder.Entity<ApplicationRole>().Property(r => r.Id).HasDefaultValueSql("NEWSEQUENTIALID()");
+
+            // Relaciones de Identity con GUID
+            modelBuilder.Entity<IdentityUserRole<Guid>>().HasKey(iur => new { iur.UserId, iur.RoleId });
+            modelBuilder.Entity<IdentityUserLogin<Guid>>().HasKey(iul => new { iul.LoginProvider, iul.ProviderKey });
+            modelBuilder.Entity<IdentityUserToken<Guid>>().HasKey(iut => new { iut.UserId, iut.LoginProvider, iut.Name });
+
             // Relación entre Partido y Polideportivo
             modelBuilder.Entity<Partido>()
-            .HasOne(p => p.Lugar)  // Indica la propiedad de navegación
-            .WithMany()
-            .HasForeignKey(p => p.LugarId)
-            .OnDelete(DeleteBehavior.Cascade) // Ajusta el comportamiento de eliminación
-            .IsRequired(false);   // Permitir que Lugar sea null
-
+                .HasOne(p => p.Lugar)
+                .WithMany()
+                .HasForeignKey(p => p.LugarId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired(false);
 
             modelBuilder.Entity<Usuario>().ToTable("Usuarios");
 
             // Relación entre Equipo y Club
             modelBuilder.Entity<Equipo>()
-            .HasOne(e => e.Club)  // Indica la propiedad de navegación
-            .WithMany()
-            .HasForeignKey(e => e.ClubId)
-            .OnDelete(DeleteBehavior.Cascade); // Ajusta el comportamiento de eliminación
+                .HasOne(e => e.Club)
+                .WithMany()
+                .HasForeignKey(e => e.ClubId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Relación entre Equipo y Categoria
             modelBuilder.Entity<Equipo>()
-            .HasOne(e => e.Categoria)  // Indica la propiedad de navegación
-            .WithMany()
-            .HasForeignKey(e => e.CategoriaId)
-            .OnDelete(DeleteBehavior.Cascade); // Ajusta el comportamiento de eliminación
+                .HasOne(e => e.Categoria)
+                .WithMany()
+                .HasForeignKey(e => e.CategoriaId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Relaciones de Partido con Equipo y Árbitros
+            modelBuilder.Entity<Partido>()
+                .HasOne(p => p.EquipoLocal)
+                .WithMany()
+                .HasForeignKey(p => p.EquipoLocalId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
 
             modelBuilder.Entity<Partido>()
-               .HasOne(p => p.EquipoLocal)
-               .WithMany()
-               .HasForeignKey(p => p.EquipoLocalId)
-               .OnDelete(DeleteBehavior.Restrict)
-               .IsRequired(false);  // Permitir que EquipoLocal sea null
-
-            modelBuilder.Entity<Partido>()
-               .HasOne(p => p.EquipoVisitante)
-               .WithMany()
-               .HasForeignKey(p => p.EquipoVisitanteId)
-               .OnDelete(DeleteBehavior.Restrict)
-               .IsRequired(false);  // Permitir que Arbitro1 sea null
+                .HasOne(p => p.EquipoVisitante)
+                .WithMany()
+                .HasForeignKey(p => p.EquipoVisitanteId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
 
             modelBuilder.Entity<Partido>()
                 .HasOne(p => p.Arbitro1)
                 .WithMany()
                 .HasForeignKey(p => p.Arbitro1Id)
                 .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired(false);  // Permitir que Arbitro1 sea null
+                .IsRequired(false);
 
             modelBuilder.Entity<Partido>()
                 .HasOne(p => p.Arbitro2)
                 .WithMany()
                 .HasForeignKey(p => p.Arbitro2Id)
                 .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired(false);  // Permitir que Arbitro2 sea null
+                .IsRequired(false);
 
             modelBuilder.Entity<Partido>()
                 .HasOne(p => p.Anotador)
                 .WithMany()
                 .HasForeignKey(p => p.AnotadorId)
                 .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired(false);  // Permitir que Anotador sea null
+                .IsRequired(false);
 
             // Relación entre Disponibilidad y Usuario
             modelBuilder.Entity<Disponibilidad>()
@@ -95,24 +100,10 @@ namespace AutoRef_API.Database
                 .WithMany()
                 .HasForeignKey(d => d.UsuarioId);
 
-            // Configuración de las propiedades de las entidades
-            modelBuilder.Entity<Partido>()
-                .Property(p => p.Id)
-                .ValueGeneratedOnAdd();      
-
-            modelBuilder.Entity<Polideportivo>()
-                .Property(p => p.Id)
-                .ValueGeneratedOnAdd();
-
-            modelBuilder.Entity<Disponibilidad>()
-                .Property(d => d.Id)
-                .ValueGeneratedOnAdd();
-
-            // Configuración de las entidades de Identity
-            modelBuilder.Entity<IdentityUserLogin<string>>().HasKey(iul => new { iul.LoginProvider, iul.ProviderKey });
-            modelBuilder.Entity<IdentityUserRole<string>>().HasKey(iur => new { iur.UserId, iur.RoleId });
-            modelBuilder.Entity<IdentityUserToken<string>>().HasKey(iut => new { iut.UserId, iut.LoginProvider, iut.Name });
+            // Configurar IDs como valores generados automáticamente
+            modelBuilder.Entity<Partido>().Property(p => p.Id).ValueGeneratedOnAdd();
+            modelBuilder.Entity<Polideportivo>().Property(p => p.Id).ValueGeneratedOnAdd();
+            modelBuilder.Entity<Disponibilidad>().Property(d => d.Id).ValueGeneratedOnAdd();
         }
-
     }
 }

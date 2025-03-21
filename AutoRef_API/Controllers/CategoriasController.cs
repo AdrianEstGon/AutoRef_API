@@ -67,15 +67,15 @@ namespace AutoRef_API.Controllers
                 .Where(c => c.Nombre.ToLower() == name.ToLower())
                 .FirstOrDefaultAsync();
 
-            if (categoria == null)
-            {
-                return NotFound($"No se encontró una categoría con el nombre '{name}'.");
-            }
 
             var result = new
             {
                 categoria.Id,
-                categoria.Nombre
+                categoria.Nombre,
+                categoria.MinArbitros,
+                categoria.PrimerArbitro,
+                categoria.SegundoArbitro,
+                categoria.Anotador
             };
 
             return Ok(result);

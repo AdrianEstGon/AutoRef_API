@@ -5,15 +5,16 @@ namespace AutoRef_API.Database;
 
 using Microsoft.AspNetCore.Identity;
 
-public class ApplicationRole : IdentityRole
+public class ApplicationRole : IdentityRole<Guid>
 {
     // Puedes añadir propiedades personalizadas para roles si lo necesitas
 }
 
-public class Usuario : IdentityUser
+public class Usuario : IdentityUser<Guid>
 {
-    public Guid Id { get; set; }
-    public string Email { get; set; }
+
+    public override Guid Id { get; set; }
+    public override string Email { get; set; }
     public string Nombre { get; set; }
     public string PrimerApellido { get; set; }
     public string SegundoApellido { get; set; }

@@ -32,6 +32,9 @@ namespace AutoRef_API.Controllers
             // Obtener la lista de partidos desde la base de datos
             var partidos = await _context.Partidos
                 .Include(p => p.Lugar)  // Incluir los detalles del lugar (Polideportivo)
+                .Include(p => p.EquipoLocal)  // Incluir detalles del equipo local
+                .Include(p => p.EquipoVisitante)  // Incluir detalles del equipo visitante
+                .Include(p => p.Categoria)  // Incluir detalles de la categoría
                 .Include(p => p.Arbitro1)  // Incluir detalles del primer árbitro
                 .Include(p => p.Arbitro2)  // Incluir detalles del segundo árbitro
                 .Include(p => p.Anotador)  // Incluir detalles del anotador
@@ -44,13 +47,17 @@ namespace AutoRef_API.Controllers
                 partidoList.Add(new
                 {
                     partido.Id,
-                    partido.EquipoLocal,
-                    partido.EquipoVisitante,
+                    EquipoLocal = partido.EquipoLocal?.Nombre,
+                    partido.EquipoLocalId,               
+                    EquipoVisitante = partido.EquipoVisitante?.Nombre,
+                    partido.EquipoVisitanteId,
                     partido.Fecha,
                     partido.Hora,
                     Lugar = partido.Lugar?.Nombre,  // Mostrar el nombre del lugar (Polideportivo)
                     partido.LugarId,
-                    partido.Categoria,
+                    Categoria = partido.Categoria?.Nombre,
+                    partido.CategoriaId,
+
                     partido.Jornada,
                     partido.NumeroPartido,
                     Arbitro1 = new

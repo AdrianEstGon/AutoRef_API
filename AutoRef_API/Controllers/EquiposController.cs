@@ -71,19 +71,13 @@
 
             if (equipo == null)
             {
-                return NotFound($"No se encontró un equipo con el nombre '{name}'.");
+                return Ok(new { }); // Devuelve un objeto JSON vacío
             }
 
-            var result = new
-            {
-                equipo.Id,
-                equipo.Nombre,
-                equipo.ClubId,
-                equipo.CategoriaId
-            };
-
-            return Ok(result);
+            return Ok(new { equipo.Id, equipo.Nombre, equipo.ClubId, equipo.CategoriaId });
         }
+
+
 
         // GET: api/Equipos/categoria/{categoriaId}
         [HttpGet("categoria/{categoriaId}")]

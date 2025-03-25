@@ -3,7 +3,9 @@ namespace AutoRef_API.Database;
 using System;
 using AutoRef_API.Enum;
 
+using Microsoft.EntityFrameworkCore;
 
+[Index(nameof(UsuarioId), nameof(Fecha), IsUnique = true)]
 public class Disponibilidad
 {
     public Guid Id { get; private set; }

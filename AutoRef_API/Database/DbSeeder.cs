@@ -25,6 +25,7 @@ public static class DbInitializer
         var adminUser = await userManager.FindByEmailAsync(adminEmail);
         if (adminUser == null)
         {
+
             adminUser = new Usuario
             {
                 UserName = adminEmail,
@@ -35,7 +36,7 @@ public static class DbInitializer
                 PrimerApellido = "Estrada",
                 SegundoApellido = "González",
                 Nivel = "Nivel II + Hab. Nacional C Pista",
-                ClubVinculado = "CLUB VOLEIBOL OVIEDO",
+                ClubVinculadoId = Guid.Parse("704A28BD-4602-40BA-83ED-980AAB21D489"),
                 Licencia = 16409,
                 Latitud = 43.382436,
                 Longitud = -5.558410,

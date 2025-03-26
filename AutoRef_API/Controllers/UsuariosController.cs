@@ -22,6 +22,7 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -32,13 +33,14 @@ public class UsuariosController : ControllerBase
     private readonly SignInManager<Usuario> _signInManager;
     private readonly HttpClient _httpClient;
     private readonly Cloudinary _cloudinary;
+    private readonly AppDataBase _context;
     private const string GoogleMapsApiKey = "TU_API_KEY_AQUI"; // Reemplaza con tu clave de API
 
     public UsuariosController(
         UserManager<Usuario> userManager,
         RoleManager<ApplicationRole> roleManager,
         SignInManager<Usuario> signInManager,
-        Cloudinary cloudinary)
+        Cloudinary cloudinary, AppDataBase context)
     {
         _userManager = userManager;
         _roleManager = roleManager;
@@ -71,7 +73,7 @@ public class UsuariosController : ControllerBase
             SegundoApellido = model.SegundoApellido,
             FechaNacimiento = model.FechaNacimiento,
             Nivel = model.Nivel,
-            ClubVinculado = model.ClubVinculado,
+            ClubVinculadoId = model.ClubVinculadoId,
             Licencia = model.Licencia,
             Direccion = model.Direccion,
             Pais = model.Pais,
@@ -79,7 +81,7 @@ public class UsuariosController : ControllerBase
             Ciudad = model.Ciudad,
             CodigoPostal = model.CodigoPostal,
             Latitud = coordenadas.Latitud,
-            Longitud = coordenadas.Longitud
+            Longitud = coordenadas.Longitud,
         };
 
         // Registrar el usuario
@@ -231,7 +233,10 @@ public class UsuariosController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetUsers()
     {
-        var users = _userManager.Users.ToList();
+
+        var users = await _userManager.Users
+                .Include(p => p.ClubVinculado)  
+                .ToListAsync();
         var userList = new List<object>();
 
         foreach (var user in users)
@@ -241,7 +246,7 @@ public class UsuariosController : ControllerBase
             {
                 user.Id,
                 user.UserName,
-                user.ClubVinculado,
+                user.ClubVinculadoId,
                 user.Licencia,
                 user.Nivel,
                 user.Nombre,
@@ -257,7 +262,8 @@ public class UsuariosController : ControllerBase
                 user.Ciudad,
                 user.Direccion,
                 user.Pais,
-                user.Region
+                user.Region,
+                ClubVinculado = user.ClubVinculado?.Nombre
             });
         }
 
@@ -280,7 +286,7 @@ public class UsuariosController : ControllerBase
         {
             user.Id,
             user.UserName,
-            user.ClubVinculado,
+            user.ClubVinculadoId,
             user.Licencia,
             user.Nivel,
             user.Nombre,
@@ -296,7 +302,8 @@ public class UsuariosController : ControllerBase
             user.Ciudad,
             user.Direccion,
             user.Pais,
-            user.Region
+            user.Region,
+            ClubVinculado = user.ClubVinculado?.Nombre
         });
     }
 
@@ -345,7 +352,7 @@ public class UsuariosController : ControllerBase
         user.SegundoApellido = model.SegundoApellido;
         user.FechaNacimiento = model.FechaNacimiento;
         user.Nivel = model.Nivel;
-        user.ClubVinculado = model.ClubVinculado;
+        user.ClubVinculadoId = model.ClubVinculadoId;
         user.Licencia = model.Licencia;
         user.Direccion = model.Direccion;
         user.Pais = model.Pais;

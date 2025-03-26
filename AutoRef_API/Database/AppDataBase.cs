@@ -51,6 +51,13 @@ namespace AutoRef_API.Database
                 .HasForeignKey(e => e.ClubId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Relación entre Usuario y Club
+            modelBuilder.Entity<Usuario>()
+                .HasOne(u => u.ClubVinculado)
+                .WithMany()
+                .HasForeignKey(u => u.ClubVinculadoId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             // Relación entre Equipo y Categoria
             modelBuilder.Entity<Equipo>()
                 .HasOne(e => e.Categoria)

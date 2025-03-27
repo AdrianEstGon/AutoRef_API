@@ -25,5 +25,9 @@
         public int Jornada { get; set; }            // Jornada del partido
         public int NumeroPartido { get; set; }      // Número del partido
 
+        public Guid? Arbitro1Id { get; set; }
+        public Guid? Arbitro2Id { get; set; }
+        public Guid? AnotadorId {  get; set; }
+
     }
 }

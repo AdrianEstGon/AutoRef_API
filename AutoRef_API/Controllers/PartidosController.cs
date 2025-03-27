@@ -57,27 +57,12 @@ namespace AutoRef_API.Controllers
                     partido.LugarId,
                     Categoria = partido.Categoria?.Nombre,
                     partido.CategoriaId,
-
                     partido.Jornada,
                     partido.NumeroPartido,
-                    Arbitro1 = new
-                    {
-                        partido.Arbitro1?.Nombre,  
-                        partido.Arbitro1?.PrimerApellido,
-                        partido.Arbitro1?.SegundoApellido,
-                    },
-                    Arbitro2 = new
-                    {
-                        partido.Arbitro2?.Nombre,
-                        partido.Arbitro2?.PrimerApellido,
-                        partido.Arbitro2?.SegundoApellido,
-                    },
-                    Anotador = new
-                    {
-                        partido.Anotador?.Nombre,
-                        partido.Anotador?.PrimerApellido,
-                        partido.Anotador?.SegundoApellido,
-                    }
+                    partido.Arbitro1Id,
+                    partido.Arbitro2Id,
+                    partido.AnotadorId
+                   
                 });
             }
 
@@ -122,6 +107,9 @@ namespace AutoRef_API.Controllers
             partido.CategoriaId = partidoModel.CategoriaId;
             partido.Jornada = partidoModel.Jornada;
             partido.NumeroPartido = partidoModel.NumeroPartido;
+            partido.Arbitro1Id = partidoModel.Arbitro1Id;
+            partido.Arbitro2Id = partidoModel.Arbitro2Id;
+            partido.AnotadorId = partidoModel.AnotadorId;
 
             try
             {

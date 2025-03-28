@@ -34,7 +34,7 @@ public class UsuariosController : ControllerBase
     private readonly HttpClient _httpClient;
     private readonly Cloudinary _cloudinary;
     private readonly AppDataBase _context;
-    private const string GoogleMapsApiKey = "TU_API_KEY_AQUI"; // Reemplaza con tu clave de API
+    private const string GoogleMapsApiKey = "AIzaSyC24LaFVU6RgtEswKeAvrryUFBg7CBgONQ"; // Reemplaza con tu clave de API
 
     public UsuariosController(
         UserManager<Usuario> userManager,
@@ -139,7 +139,7 @@ public class UsuariosController : ControllerBase
     private async Task<(double Latitud, double Longitud)> ObtenerCoordenadas(string direccion, string ciudad, string pais)
     {
         var direccionCompleta = $"{direccion}, {ciudad}, {pais}";
-        var url = $"https://maps.googleapis.com/maps/api/geocode/json?address={Uri.EscapeDataString(direccionCompleta)}&key=AIzaSyC24LaFVU6RgtEswKeAvrryUFBg7CBgONQ";
+        var url = $"https://maps.googleapis.com/maps/api/geocode/json?address={Uri.EscapeDataString(direccionCompleta)}&key={GoogleMapsApiKey}";
 
         var response = await _httpClient.GetAsync(url);
         if (!response.IsSuccessStatusCode)

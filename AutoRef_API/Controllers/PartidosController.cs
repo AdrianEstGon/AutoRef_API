@@ -135,7 +135,7 @@ namespace AutoRef_API.Controllers
 
             if (partidos == null || partidos.Count == 0)
             {
-                return NotFound(new { message = "No hay partidos designados para este usuario." });
+                return Ok(new { message = "No hay partidos designados para este usuario." });
             }
 
             var resultado = partidos.Select(partido => new

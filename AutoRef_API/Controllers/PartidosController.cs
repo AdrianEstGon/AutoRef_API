@@ -73,14 +73,95 @@ namespace AutoRef_API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Partido>> GetPartido(Guid id)
         {
-            var partido = await _context.Partidos.Include(p => p.Lugar).FirstOrDefaultAsync(p => p.Id == id);
+            var partido = await _context.Partidos
+                .Include(p => p.Lugar)
+                .Include(p => p.EquipoLocal)
+                .Include(p => p.EquipoVisitante)
+                .Include(p => p.Categoria)
+                .Include(p => p.Arbitro1)
+                .Include(p => p.Arbitro2)
+                .Include(p => p.Anotador)
+                .FirstOrDefaultAsync(p => p.Id == id);
 
             if (partido == null)
             {
-                return NotFound();
+                return NotFound(new { message = "No se encontró el partido con el ID proporcionado." });
             }
 
-            return partido;
+            var resultado = new
+            {
+                partido.Id,
+                partido.NumeroPartido,
+                EquipoLocal = partido.EquipoLocal?.Nombre,
+                partido.EquipoLocalId,
+                EquipoVisitante = partido.EquipoVisitante?.Nombre,
+                partido.EquipoVisitanteId,
+                Fecha = partido.Fecha.ToString("yyyy-MM-dd"),
+                Hora = partido.Hora,
+                Lugar = partido.Lugar != null ? new
+                {
+                    Nombre = partido.Lugar.Nombre,
+                    Latitud = partido.Lugar.Latitud,
+                    Longitud = partido.Lugar.Longitud
+                } : null,
+                partido.LugarId,
+                Categoria = partido.Categoria?.Nombre,
+                partido.CategoriaId,
+                partido.Jornada,
+                Arbitro1 = partido.Arbitro1 != null ? $"{partido.Arbitro1.Nombre} {partido.Arbitro1.PrimerApellido} {partido.Arbitro1.SegundoApellido} " : null,
+                Arbitro1Licencia = partido.Arbitro1?.Licencia,
+                Arbitro2 = partido.Arbitro2 != null ? $"{partido.Arbitro2.Nombre} {partido.Arbitro2.PrimerApellido} {partido.Arbitro2.SegundoApellido}" : null,
+                Arbitro2Licencia = partido.Arbitro2?.Licencia,
+                Anotador = partido.Anotador != null ? $"{partido.Anotador.Nombre} {partido.Anotador.PrimerApellido} {partido.Anotador.SegundoApellido}" : null,
+                AnotadorLicencia = partido.Anotador?.Licencia
+            };
+
+            return Ok(resultado);
+        }
+
+        [HttpGet("Usuario/{userId}")]
+        public async Task<IActionResult> GetPartidosByUserId(Guid userId)
+        {
+            var partidos = await _context.Partidos
+                .Include(p => p.Lugar)
+                .Include(p => p.EquipoLocal)
+                .Include(p => p.EquipoVisitante)
+                .Include(p => p.Categoria)
+                .Include(p => p.Arbitro1)
+                .Include(p => p.Arbitro2)
+                .Include(p => p.Anotador)
+                .Where(p => p.Arbitro1Id == userId || p.Arbitro2Id == userId || p.AnotadorId == userId)
+                .ToListAsync();
+
+            if (partidos == null || partidos.Count == 0)
+            {
+                return NotFound(new { message = "No hay partidos designados para este usuario." });
+            }
+
+            var resultado = partidos.Select(partido => new
+            {
+                partido.Id,
+                EquipoLocal = partido.EquipoLocal?.Nombre,
+                partido.EquipoLocalId,
+                EquipoVisitante = partido.EquipoVisitante?.Nombre,
+                partido.EquipoVisitanteId,
+                partido.Fecha,
+                partido.Hora,
+                Lugar = partido.Lugar?.Nombre,
+                partido.LugarId,
+                Categoria = partido.Categoria?.Nombre,
+                partido.CategoriaId,
+                partido.Jornada,
+                partido.NumeroPartido,
+                Arbitro1 = partido.Arbitro1 != null ? $"{partido.Arbitro1.Nombre} {partido.Arbitro1.PrimerApellido} {partido.Arbitro1.SegundoApellido}" : null,
+                Arbitro2 = partido.Arbitro2 != null ? $"{partido.Arbitro2.Nombre} {partido.Arbitro2.PrimerApellido} {partido.Arbitro2.SegundoApellido}" : null,
+                Anotador = partido.Anotador != null ? $"{partido.Anotador.Nombre} {partido.Anotador.PrimerApellido} {partido.Anotador.SegundoApellido}" : null,
+                partido.Arbitro1Id,
+                partido.Arbitro2Id,
+                partido.AnotadorId
+            });
+
+            return Ok(resultado);
         }
 
         // PUT: api/Partidos/5

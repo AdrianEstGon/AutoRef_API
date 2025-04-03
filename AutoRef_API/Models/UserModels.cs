@@ -29,6 +29,8 @@ public class UpdateModel
     public DateTime FechaNacimiento { get; set; }
     public string? Nivel { get; set; }
     public Guid? ClubVinculadoId { get; set; }
+
+    public string ClubVinculado { get; set; }   
     public int Licencia { get; set; }
     public string? Direccion { get; set; }
     public string? Pais { get; set; }
@@ -40,7 +42,7 @@ public class UpdateModel
 
     public double Latitud { get; set; }
     public double Longitud { get; set; }
-    public byte[]? FotoPerfil { get; set; }
+    public string? FotoPerfil { get; set; }
     public bool EsAdmin { get; set; } // Para indicar si el usuario debe tener rol Admin
 }
 

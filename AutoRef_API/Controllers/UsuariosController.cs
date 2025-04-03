@@ -182,7 +182,8 @@ public class UsuariosController : ControllerBase
             message = "Inicio de sesión exitoso",
             token,   // Agrega el token en la respuesta
             role = roles.FirstOrDefault(),// Devuelve el rol del usuario
-            id = user.Id
+            id = user.Id,
+            fotoPerfil = user.FotoPerfil,
         });
     }
 
@@ -359,6 +360,7 @@ public class UsuariosController : ControllerBase
         user.Region = model.Region;
         user.Ciudad = model.Ciudad;
         user.CodigoPostal = model.CodigoPostal;
+        user.FotoPerfil = model.FotoPerfil;
 
         // Obtener las coordenadas actualizadas
         var coordenadas = await ObtenerCoordenadas(model.Direccion, model.Ciudad, model.Pais);

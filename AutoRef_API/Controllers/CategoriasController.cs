@@ -33,7 +33,11 @@ namespace AutoRef_API.Controllers
                 categoriasList.Add(new
                 {
                     categoria.Id,
-                    categoria.Nombre
+                    categoria.Nombre,
+                    categoria.PrimerArbitro,
+                    categoria.SegundoArbitro,
+                    categoria.Anotador,
+                    categoria.MinArbitros,
                 });
             }
 

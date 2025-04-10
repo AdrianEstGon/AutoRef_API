@@ -20,6 +20,7 @@ namespace AutoRef_API.Database
         public DbSet<Equipo> Equipos { get; set; }
         public DbSet<Club> Clubs { get; set; }
         public DbSet<Categoria> Categorias { get; set; }
+        public DbSet<Notificacion> Notificaciones { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,6 +34,13 @@ namespace AutoRef_API.Database
             modelBuilder.Entity<IdentityUserRole<Guid>>().HasKey(iur => new { iur.UserId, iur.RoleId });
             modelBuilder.Entity<IdentityUserLogin<Guid>>().HasKey(iul => new { iul.LoginProvider, iul.ProviderKey });
             modelBuilder.Entity<IdentityUserToken<Guid>>().HasKey(iut => new { iut.UserId, iut.LoginProvider, iut.Name });
+
+            // Relación entre Notificacion y Usuario
+            modelBuilder.Entity<Notificacion>()
+                .HasOne(n => n.Usuario)
+                .WithMany()
+                .HasForeignKey(n => n.UsuarioId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Relación entre Partido y Polideportivo
             modelBuilder.Entity<Partido>()

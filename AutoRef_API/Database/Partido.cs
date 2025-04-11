@@ -18,6 +18,10 @@ public class Partido
     public int Jornada { get; set; }
     public int NumeroPartido { get; set; }
 
+    public int EstadoArbitro1 { get; set; }
+    public int EstadoArbitro2 { get; set; }
+    public int EstadoAnotador { get; set; }
+
 
 
 

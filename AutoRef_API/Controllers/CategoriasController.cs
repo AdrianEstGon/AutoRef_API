@@ -38,6 +38,7 @@ namespace AutoRef_API.Controllers
                     categoria.SegundoArbitro,
                     categoria.Anotador,
                     categoria.MinArbitros,
+                    categoria.Prioridad
                 });
             }
 
@@ -79,7 +80,8 @@ namespace AutoRef_API.Controllers
                 categoria.MinArbitros,
                 categoria.PrimerArbitro,
                 categoria.SegundoArbitro,
-                categoria.Anotador
+                categoria.Anotador,
+                categoria.Prioridad
             };
 
             return Ok(result);

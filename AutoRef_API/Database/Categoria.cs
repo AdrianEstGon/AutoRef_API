@@ -9,6 +9,8 @@
         public string? Anotador { get; set; }
         public int MinArbitros { get; set; }
 
+        public int Prioridad { get; set; }
+
 
     }
 }

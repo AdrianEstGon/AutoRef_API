@@ -28,6 +28,10 @@
         public Guid? Arbitro1Id { get; set; }
         public Guid? Arbitro2Id { get; set; }
         public Guid? AnotadorId {  get; set; }
+        public int EstadoArbitro1 { get; set; }
+
+        public int EstadoArbitro2 { get; set; }
+        public int EstadoAnotador { get; set; }
 
     }
 }

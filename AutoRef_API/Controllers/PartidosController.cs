@@ -61,8 +61,11 @@ namespace AutoRef_API.Controllers
                     partido.NumeroPartido,
                     partido.Arbitro1Id,
                     partido.Arbitro2Id,
-                    partido.AnotadorId
-                   
+                    partido.AnotadorId,
+                    partido.EstadoArbitro1,
+                    partido.EstadoArbitro2,
+                    partido.EstadoAnotador,
+
                 });
             }
 
@@ -113,7 +116,10 @@ namespace AutoRef_API.Controllers
                 Arbitro2 = partido.Arbitro2 != null ? $"{partido.Arbitro2.Nombre} {partido.Arbitro2.PrimerApellido} {partido.Arbitro2.SegundoApellido}" : null,
                 Arbitro2Licencia = partido.Arbitro2?.Licencia,
                 Anotador = partido.Anotador != null ? $"{partido.Anotador.Nombre} {partido.Anotador.PrimerApellido} {partido.Anotador.SegundoApellido}" : null,
-                AnotadorLicencia = partido.Anotador?.Licencia
+                AnotadorLicencia = partido.Anotador?.Licencia,
+                partido.EstadoArbitro1,
+                partido.EstadoArbitro2,
+                partido.EstadoAnotador,
             };
 
             return Ok(resultado);
@@ -158,7 +164,10 @@ namespace AutoRef_API.Controllers
                 Anotador = partido.Anotador != null ? $"{partido.Anotador.Nombre} {partido.Anotador.PrimerApellido} {partido.Anotador.SegundoApellido}" : null,
                 partido.Arbitro1Id,
                 partido.Arbitro2Id,
-                partido.AnotadorId
+                partido.AnotadorId,
+                partido.EstadoArbitro1,
+                partido.EstadoArbitro2,
+                partido.EstadoAnotador,
             });
 
             return Ok(resultado);
@@ -191,6 +200,9 @@ namespace AutoRef_API.Controllers
             partido.Arbitro1Id = partidoModel.Arbitro1Id;
             partido.Arbitro2Id = partidoModel.Arbitro2Id;
             partido.AnotadorId = partidoModel.AnotadorId;
+            partido.EstadoArbitro1 = partidoModel.EstadoArbitro1;
+            partido.EstadoArbitro2 = partidoModel.EstadoArbitro2;
+            partido.EstadoAnotador = partidoModel.EstadoAnotador;
 
             try
             {
@@ -242,7 +254,10 @@ namespace AutoRef_API.Controllers
                 EquipoVisitanteId = partidoModel.EquipoVisitanteId,
                 CategoriaId = partidoModel.CategoriaId,
                 Jornada = partidoModel.Jornada,
-                NumeroPartido = partidoModel.NumeroPartido
+                NumeroPartido = partidoModel.NumeroPartido,
+                EstadoArbitro1 = 0, // Estado inicial del árbitro 1
+                EstadoArbitro2 = 0, // Estado inicial del árbitro 2
+                EstadoAnotador = 0, // Estado inicial del anotador
             };
 
             // Guardar el partido en la base de datos

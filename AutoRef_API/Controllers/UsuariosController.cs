@@ -47,6 +47,7 @@ public class UsuariosController : ControllerBase
         _signInManager = signInManager;
         _httpClient = new HttpClient();
         _cloudinary = cloudinary;
+        _context = context;
     }
 
     [HttpPost("register")]
@@ -318,20 +319,44 @@ public class UsuariosController : ControllerBase
             return NotFound(new { message = "Usuario no encontrado" });
         }
 
-        // Obtener los roles asignados al usuario
-        var roles = await _userManager.GetRolesAsync(user);
+        var userGuid = Guid.Parse(id); // o Guid.TryParse para mayor seguridad
 
-        // Remover cada rol asignado
+        // 1. Eliminar disponibilidades
+        var disponibilidades = await _context.Disponibilidades
+            .Where(d => d.UsuarioId == userGuid)
+            .ToListAsync();
+
+        _context.Disponibilidades.RemoveRange(disponibilidades);
+
+        
+
+        var partidos = await _context.Partidos
+            .Where(p => p.Arbitro1Id == userGuid || p.Arbitro2Id == userGuid || p.AnotadorId == userGuid)
+            .ToListAsync();
+
+
+        foreach (var partido in partidos)
+        {
+            if (partido.Arbitro1Id == userGuid) partido.Arbitro1Id = null;
+            if (partido.Arbitro2Id == userGuid) partido.Arbitro2Id = null;
+            if (partido.AnotadorId == userGuid) partido.AnotadorId = null;
+        }
+
+        // Guardar cambios hasta aquí (disponibilidades y partidos)
+        await _context.SaveChangesAsync();
+
+        // 3. Remover roles asignados al usuario
+        var roles = await _userManager.GetRolesAsync(user);
         foreach (var role in roles)
         {
             await _userManager.RemoveFromRoleAsync(user, role);
         }
 
-        // Eliminar el usuario
+        // 4. Eliminar el usuario
         var result = await _userManager.DeleteAsync(user);
         if (result.Succeeded)
         {
-            return Ok(new { message = "Usuario y roles eliminados con éxito" });
+            return Ok(new { message = "Usuario, disponibilidades y asignaciones eliminadas con éxito" });
         }
 
         return BadRequest(new { message = "Error al eliminar el usuario", errors = result.Errors });
@@ -504,7 +529,7 @@ public class UsuariosController : ControllerBase
             issuer: "TuIssuer",
             audience: "TuAudience",
             claims: claims,
-            expires: DateTime.Now.AddHours(1),
+            expires: DateTime.Now.AddHours(3),
             signingCredentials: credentials
         );
 

@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using AutoRef_API.Database;
 using Microsoft.AspNetCore.Authorization;
 using AutoRef_API.Models;
+using AutoRef_API.Services;
+using AutoRef_API.Migrations;
 
 namespace AutoRef_API.Controllers
 {
@@ -90,7 +92,6 @@ namespace AutoRef_API.Controllers
 
             var notificacion = new Notificacion
             {
-                Id = Guid.NewGuid(),
                 UsuarioId = notificacionModel.UsuarioId,
                 Mensaje = notificacionModel.Mensaje,
                 Fecha = notificacionModel.Fecha,
@@ -100,7 +101,25 @@ namespace AutoRef_API.Controllers
             _context.Notificaciones.Add(notificacion);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetNotificacion), new { id = notificacion.Id }, notificacion);
+            Usuario user = await _context.Users.FindAsync(notificacionModel.UsuarioId);
+            if (user == null)
+            {
+                return NotFound(new { message = "Usuario no encontrado." });
+            }
+            try
+            {
+                var mailService = new MailService();
+                await mailService.SendEmailAsync(user.Email, "Nueva designación", $"Hola {user.Nombre},\n\n{notificacion.Mensaje}\n\n¡Saludos!");
+            }
+            catch (Exception ex)
+            {
+                // Log del error para que puedas investigar
+                Console.WriteLine($"Error al enviar correo: {ex.Message}");
+                return StatusCode(500, new { message = "Error al enviar el correo." });
+            }
+
+
+            return Ok(new { message = "Notificacion creada con éxito" });
         }
 
         // PUT: api/Notificaciones/5

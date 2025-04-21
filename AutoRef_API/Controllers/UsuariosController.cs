@@ -34,7 +34,7 @@ public class UsuariosController : ControllerBase
     private readonly HttpClient _httpClient;
     private readonly Cloudinary _cloudinary;
     private readonly AppDataBase _context;
-    private const string GoogleMapsApiKey = "AIzaSyC24LaFVU6RgtEswKeAvrryUFBg7CBgONQ"; // Reemplaza con tu clave de API
+    private const string GoogleMapsApiKey = "AIzaSyC24LaFVU6RgtEswKeAvrryUFBg7CBgONQ"; 
 
     public UsuariosController(
         UserManager<Usuario> userManager,

@@ -13,7 +13,7 @@ public static class DbInitializer
     {
         string adminRole = "Admin";
         string adminEmail = "adrian.estrada2001@gmail.com";
-        string adminPassword = "Admin@123"; // Cambiar esto en producción.
+        string adminPassword = "Admin@123"; 
 
         // 1. Crear el rol "Admin" si no existe
         if (!await roleManager.RoleExistsAsync(adminRole))
@@ -30,8 +30,7 @@ public static class DbInitializer
             {
                 UserName = adminEmail,
                 Email = adminEmail,
-                //NombreCompleto = "Super Administrador",
-                EmailConfirmed = true, // Opcional: para evitar confirmaciones
+                EmailConfirmed = true, 
                 Nombre = "Adrián",
                 PrimerApellido = "Estrada",
                 SegundoApellido = "González",

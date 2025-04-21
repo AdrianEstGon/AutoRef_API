@@ -167,7 +167,6 @@ namespace AutoRef_API.Controllers
 
 
         // DELETE: api/Notificaciones/5
-        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteNotificacion(Guid id)
         {
@@ -180,7 +179,7 @@ namespace AutoRef_API.Controllers
             _context.Notificaciones.Remove(notificacion);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
 
         private bool NotificacionExists(Guid id)

@@ -166,21 +166,34 @@ namespace AutoRef_API.Controllers
         }
 
 
+
         // DELETE: api/Notificaciones/5
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteNotificacion(Guid id)
         {
             var notificacion = await _context.Notificaciones.FindAsync(id);
+
             if (notificacion == null)
             {
-                return NotFound();
+                // Ya fue eliminada
+                return Ok(new { message = "La notificación ya fue eliminada." });
             }
 
-            _context.Notificaciones.Remove(notificacion);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Notificaciones.Remove(notificacion);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                // Algo la eliminó entre FindAsync y SaveChangesAsync, tratamos como éxito
+                return Ok(new { message = "La notificación ya no existía al intentar eliminarla." });
+            }
 
-            return Ok();
+            return Ok(new { message = "Notificación eliminada correctamente." });
         }
+
 
         private bool NotificacionExists(Guid id)
         {

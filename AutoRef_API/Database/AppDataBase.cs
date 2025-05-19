@@ -119,6 +119,12 @@ namespace AutoRef_API.Database
             modelBuilder.Entity<Partido>().Property(p => p.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<Polideportivo>().Property(p => p.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<Disponibilidad>().Property(d => d.Id).ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Usuario>()
+            .HasIndex(u => u.Licencia)
+            .IsUnique();
         }
+
+
     }
 }

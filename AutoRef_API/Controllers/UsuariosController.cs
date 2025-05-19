@@ -58,6 +58,16 @@ public class UsuariosController : ControllerBase
         {
             return BadRequest(new { message = "El correo electrónico ya está registrado" });
         }
+
+ 
+        var licenciaExistente = await _userManager.Users
+            .AnyAsync(u => u.Licencia == model.Licencia);
+
+        if (licenciaExistente)
+        {
+            return BadRequest(new { message = "El número de licencia ya está registrado" });
+        }
+        
         // Obtener las coordenadas (geolocalización)
         var coordenadas = await ObtenerCoordenadas(model.Direccion, model.Ciudad, model.Pais);
 
@@ -372,6 +382,19 @@ public class UsuariosController : ControllerBase
         {
             return NotFound(new { message = "Usuario no encontrado" });
         }
+
+        if (model.Licencia != 0)
+        {
+            var licenciaEnUso = await _userManager.Users
+                .AnyAsync(u => u.Id != user.Id && u.Licencia == model.Licencia);
+
+            if (licenciaEnUso)
+            {
+                return BadRequest(new { message = "El número de licencia ya está en uso por otro usuario" });
+            }
+        }
+
+
 
         user.Nombre = model.Nombre;
         user.PrimerApellido = model.PrimerApellido;

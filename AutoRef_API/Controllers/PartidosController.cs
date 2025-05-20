@@ -186,6 +186,19 @@ namespace AutoRef_API.Controllers
             if (partido == null)
                 return NotFound(new { message = "El partido no existe." });
 
+            // Guardar valores originales para comparar
+            var datosOriginales = new
+            {
+                partido.EquipoLocalId,
+                partido.EquipoVisitanteId,
+                partido.Fecha,
+                partido.Hora,
+                partido.LugarId,
+                partido.CategoriaId,
+                partido.Jornada,
+                partido.NumeroPartido
+            };
+
             // Actualizar datos
             partido.EquipoLocalId = partidoModel.EquipoLocalId;
             partido.EquipoVisitanteId = partidoModel.EquipoVisitanteId;
@@ -202,73 +215,85 @@ namespace AutoRef_API.Controllers
             partido.EstadoArbitro2 = partidoModel.EstadoArbitro2;
             partido.EstadoAnotador = partidoModel.EstadoAnotador;
 
+            // Determinar si hubo cambios relevantes
+            bool datosPartidoModificados =
+                datosOriginales.EquipoLocalId != partido.EquipoLocalId ||
+                datosOriginales.EquipoVisitanteId != partido.EquipoVisitanteId ||
+                datosOriginales.Fecha != partido.Fecha ||
+                datosOriginales.Hora != partido.Hora ||
+                datosOriginales.LugarId != partido.LugarId ||
+                datosOriginales.CategoriaId != partido.CategoriaId ||
+                datosOriginales.Jornada != partido.Jornada ||
+                datosOriginales.NumeroPartido != partido.NumeroPartido;
+
             await _context.SaveChangesAsync();
 
-            // Volver a cargar el partido con las relaciones
-            partido = await _context.Partidos
-                .Include(p => p.Lugar)
-                .Include(p => p.Categoria)
-                .Include(p => p.EquipoLocal)
-                .Include(p => p.EquipoVisitante)
-                .Include(p => p.Arbitro1)
-                .Include(p => p.Arbitro2)
-                .Include(p => p.Anotador)
-                .FirstOrDefaultAsync(p => p.Id == id);
-
-            // Función para notificar
-            async Task NotificarCambio(Usuario usuario, Partido partido)
+            if (datosPartidoModificados)
             {
-                if (usuario?.Email != null)
+                // Volver a cargar con relaciones
+                partido = await _context.Partidos
+                    .Include(p => p.Lugar)
+                    .Include(p => p.Categoria)
+                    .Include(p => p.EquipoLocal)
+                    .Include(p => p.EquipoVisitante)
+                    .Include(p => p.Arbitro1)
+                    .Include(p => p.Arbitro2)
+                    .Include(p => p.Anotador)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+
+                // Notificar
+                async Task NotificarCambio(Usuario usuario, Partido partido)
                 {
-                    string GetNombreCompleto(Usuario? u) =>
-                        u == null ? "Sin definir" : $"{u.Nombre} {u.PrimerApellido} {u.SegundoApellido}";
-
-                    string mensajeCorreo =
-                        "El siguiente partido que tienes designado ha sido modificado:\n\n" +
-                        $"- Fecha: {partido.Fecha:yyyy-MM-dd}\n" +
-                        $"- Hora: {partido.Hora}\n" +
-                        $"- Lugar: {partido.Lugar?.Nombre ?? "Sin definir"}\n" +
-                        $"- Categoría: {partido.Categoria?.Nombre ?? "Sin definir"}\n" +
-                        $"- Jornada: {partido.Jornada}\n" +
-                        $"- Nº de Partido: {partido.NumeroPartido}\n" +
-                        $"- Equipo Local: {partido.EquipoLocal?.Nombre ?? "Sin definir"}\n" +
-                        $"- Equipo Visitante: {partido.EquipoVisitante?.Nombre ?? "Sin definir"}\n" +
-                        $"- Árbitro 1: {GetNombreCompleto(partido.Arbitro1)}\n" +
-                        $"- Árbitro 2: {GetNombreCompleto(partido.Arbitro2)}\n" +
-                        $"- Anotador: {GetNombreCompleto(partido.Anotador)}\n\n" +
-                        "Revisa tus designaciones para más información.";
-
-                    // ✉️ Enviar correo
-                    var mailService = new MailService();
-                    await mailService.SendEmailAsync(
-                        usuario.Email,
-                        "Modificación en un partido asignado",
-                        $"Hola {usuario.Nombre},\n\n{mensajeCorreo}\n\nGracias."
-                    );
-
-                    // 🛎️ Notificación del panel
-                    string mensajeNotificacion = $"El partido que se disputa en la fecha {partido.Fecha:yyyy-MM-dd} a las {partido.Hora} entre los equipos {partido.EquipoLocal?.Nombre ?? "Sin definir"} y {partido.EquipoVisitante?.Nombre ?? "Sin definir"} de la categoría {partido.Categoria?.Nombre ?? "Sin definir"} ha sido modificado. Revisa tus designaciones para más información.";
-
-                    var notificacion = new Notificacion
+                    if (usuario?.Email != null)
                     {
-                        UsuarioId = usuario.Id,
-                        Mensaje = mensajeNotificacion,
-                        Fecha = partido.Fecha,
-                        Leida = false
-                    };
+                        string GetNombreCompleto(Usuario? u) =>
+                            u == null ? "Sin definir" : $"{u.Nombre} {u.PrimerApellido} {u.SegundoApellido}";
 
-                    _context.Notificaciones.Add(notificacion);
-                    await _context.SaveChangesAsync();
+                        string mensajeCorreo =
+                            "El siguiente partido que tienes designado ha sido modificado:\n\n" +
+                            $"- Fecha: {partido.Fecha:yyyy-MM-dd}\n" +
+                            $"- Hora: {partido.Hora}\n" +
+                            $"- Lugar: {partido.Lugar?.Nombre ?? "Sin definir"}\n" +
+                            $"- Categoría: {partido.Categoria?.Nombre ?? "Sin definir"}\n" +
+                            $"- Jornada: {partido.Jornada}\n" +
+                            $"- Nº de Partido: {partido.NumeroPartido}\n" +
+                            $"- Equipo Local: {partido.EquipoLocal?.Nombre ?? "Sin definir"}\n" +
+                            $"- Equipo Visitante: {partido.EquipoVisitante?.Nombre ?? "Sin definir"}\n" +
+                            $"- Árbitro 1: {GetNombreCompleto(partido.Arbitro1)}\n" +
+                            $"- Árbitro 2: {GetNombreCompleto(partido.Arbitro2)}\n" +
+                            $"- Anotador: {GetNombreCompleto(partido.Anotador)}\n\n" +
+                            "Revisa tus designaciones para más información.";
+
+                        var mailService = new MailService();
+                        await mailService.SendEmailAsync(
+                            usuario.Email,
+                            "Modificación en un partido asignado",
+                            $"Hola {usuario.Nombre},\n\n{mensajeCorreo}\n\nGracias."
+                        );
+
+                        string mensajeNotificacion = $"El partido que se disputa en la fecha {partido.Fecha:yyyy-MM-dd} a las {partido.Hora} entre los equipos {partido.EquipoLocal?.Nombre ?? "Sin definir"} y {partido.EquipoVisitante?.Nombre ?? "Sin definir"} de la categoría {partido.Categoria?.Nombre ?? "Sin definir"} ha sido modificado. Revisa tus designaciones para más información.";
+
+                        var notificacion = new Notificacion
+                        {
+                            UsuarioId = usuario.Id,
+                            Mensaje = mensajeNotificacion,
+                            Fecha = partido.Fecha,
+                            Leida = false
+                        };
+
+                        _context.Notificaciones.Add(notificacion);
+                        await _context.SaveChangesAsync();
+                    }
                 }
-            }
 
-            // Enviar notificaciones
-            await NotificarCambio(partido.Arbitro1, partido);
-            await NotificarCambio(partido.Arbitro2, partido);
-            await NotificarCambio(partido.Anotador, partido);
+                await NotificarCambio(partido.Arbitro1, partido);
+                await NotificarCambio(partido.Arbitro2, partido);
+                await NotificarCambio(partido.Anotador, partido);
+            }
 
             return Ok(new { message = "Partido actualizado con éxito." });
         }
+
 
 
 

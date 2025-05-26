@@ -30,7 +30,7 @@ public class UpdateModel
     public string? Nivel { get; set; }
     public Guid? ClubVinculadoId { get; set; }
 
-    public string ClubVinculado { get; set; }   
+    public string? ClubVinculado { get; set; }   
     public int Licencia { get; set; }
     public string? Direccion { get; set; }
     public string? Pais { get; set; }

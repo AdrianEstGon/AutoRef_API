@@ -46,6 +46,7 @@ namespace AutoRef_API.Controllers
         }
 
         // GET: api/Disponibilidad/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDisponibilidad(Guid id)
         {
@@ -90,6 +91,7 @@ namespace AutoRef_API.Controllers
 
 
         // POST: api/Disponibilidad
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> PostDisponibilidad([FromBody] DisponibilidadModel disponibilidadModel)
         {
@@ -116,6 +118,7 @@ namespace AutoRef_API.Controllers
         }
 
         // PUT: api/Disponibilidad/5
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDisponibilidad(Guid id, [FromBody] DisponibilidadModel disponibilidadModel)
         {

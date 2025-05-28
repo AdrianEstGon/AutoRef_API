@@ -15,7 +15,7 @@
     public string? Region { get; set; }
     public string? Ciudad { get; set; }
     public string? CodigoPostal { get; set; }
-    public bool EsAdmin { get; set; } // Para indicar si el usuario debe tener rol Admin
+    public bool EsAdmin { get; set; } 
 }
 
 public class UpdateModel

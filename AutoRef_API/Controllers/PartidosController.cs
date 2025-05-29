@@ -17,13 +17,11 @@ namespace AutoRef_API.Controllers
     [ApiController]
     public class PartidosController : ControllerBase
     {
-        private readonly UserManager<Usuario> _userManager;
         private readonly AppDataBase _context;
 
-        public PartidosController(AppDataBase context, UserManager<Usuario> userManager)
+        public PartidosController(AppDataBase context)
         {
             _context = context;
-            _userManager = userManager;
         }
 
         // GET: api/Partidos

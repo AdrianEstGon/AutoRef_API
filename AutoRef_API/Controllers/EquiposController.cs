@@ -182,7 +182,7 @@
             _context.Equipos.Remove(equipo);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
 
         private bool EquipoExists(Guid id)

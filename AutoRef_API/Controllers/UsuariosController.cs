@@ -219,9 +219,7 @@ public class UsuariosController : ControllerBase
         return BadRequest(new { message = "El rol ya existe" });
     }
 
-    /// <summary>
-    /// Asigna un rol a un usuario.
-    /// </summary>
+
     [Authorize(Roles = "Admin")]
     [HttpPost("assign-role")]
     public async Task<IActionResult> AssignRole([FromBody] AssignRoleModel model)
@@ -238,9 +236,7 @@ public class UsuariosController : ControllerBase
         return BadRequest(result.Errors);
     }
 
-    /// <summary>
-    /// Obtiene la lista de usuarios con sus roles.
-    /// </summary>
+
     [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<IActionResult> GetUsers()
@@ -526,13 +522,6 @@ public class UsuariosController : ControllerBase
         // Si la URL de la foto está en Cloudinary, devolverla como una URL de redirección
         return Redirect(user.FotoPerfil); // Redirige a la imagen en Cloudinary
     }
-
-
-
-
-
-
-
 
     private string GenerateJwtToken(Usuario user, IList<string> roles)
     {

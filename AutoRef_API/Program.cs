@@ -6,10 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-
 using System.Text;
-using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -107,8 +104,6 @@ using (var scope = app.Services.CreateScope())
         var userManager = services.GetRequiredService<UserManager<Usuario>>();
         var roleManager = services.GetRequiredService<RoleManager<ApplicationRole>>();
 
-        // Llamar al método para inicializar roles y admin
-        await DbInitializer.SeedRolesAndAdmin(userManager, roleManager);
     }
     catch (Exception ex)
     {

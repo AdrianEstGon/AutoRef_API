@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Identity;
 
 public class ApplicationRole : IdentityRole<Guid>
 {
-    // Puedes añadir propiedades personalizadas para roles si lo necesitas
 }
 
 public class Usuario : IdentityUser<Guid>

@@ -195,6 +195,7 @@ public class UsuariosController : ControllerBase
             role = roles.FirstOrDefault(),// Devuelve el rol del usuario
             id = user.Id,
             fotoPerfil = user.FotoPerfil,
+            licencia = user.Licencia
         });
     }
 
@@ -541,7 +542,7 @@ public class UsuariosController : ControllerBase
             issuer: "TuIssuer",
             audience: "TuAudience",
             claims: claims,
-            expires: DateTime.Now.AddHours(3),
+            expires: DateTime.Now.AddHours(12),
             signingCredentials: credentials
         );
 

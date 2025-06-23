@@ -53,7 +53,7 @@ namespace AutoRef_API.Controllers
                     partido.EquipoVisitanteId,
                     partido.Fecha,
                     partido.Hora,
-                    Lugar = partido.Lugar?.Nombre,  // Mostrar el nombre del lugar (Polideportivo)
+                    Lugar = partido.Lugar?.Nombre,  
                     partido.LugarId,
                     Categoria = partido.Categoria?.Nombre,
                     partido.CategoriaId,
@@ -65,7 +65,6 @@ namespace AutoRef_API.Controllers
                     partido.EstadoArbitro1,
                     partido.EstadoArbitro2,
                     partido.EstadoAnotador,
-
                 });
             }
 

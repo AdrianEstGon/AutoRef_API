@@ -72,7 +72,7 @@ public class UsuariosController : ControllerBase
         var coordenadas = await ObtenerCoordenadas(model.Direccion, model.Ciudad, model.Pais);
 
         // Generar la contraseña
-        var contraseñaGenerada = GenerarContraseña(model.Nombre); // Usa la función para generar la contraseña
+        var contrasenaGenerada = GenerarContraseña(model.Nombre); // Usa la función para generar la contraseña
 
         // Crear el objeto Usuario
         var user = new Usuario
@@ -96,13 +96,13 @@ public class UsuariosController : ControllerBase
         };
 
         // Registrar el usuario
-        var result = await _userManager.CreateAsync(user, contraseñaGenerada);
+        var result = await _userManager.CreateAsync(user, contrasenaGenerada);
 
         if (result.Succeeded)
         {
             // Enviar la contraseña por correo
             var mailService = new MailService();  // Crear instancia del servicio de correo
-            await mailService.SendEmailAsync(model.Email, "Tu nueva contraseña", $"Hola {model.Nombre},\n\nTu nueva contraseña es: {contraseñaGenerada}\n\nSaludos!");
+            await mailService.SendEmailAsync(model.Email, "Tu nueva contraseña", $"Hola {model.Nombre},\n\nTu nueva contraseña es: {contrasenaGenerada}\n\nSaludos!");
 
             // Asigna "Admin" si EsAdmin es true
             if (model.EsAdmin)

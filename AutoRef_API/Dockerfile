@@ -1,15 +1,13 @@
-# Etapa de build
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+# Etapa de build con .NET 8
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
-# Copiar todo el proyecto (ya estamos dentro del contexto correcto)
 COPY . .
-
 RUN dotnet restore
 RUN dotnet publish -c Release -o out
 
-# Etapa runtime
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS runtime
+# Etapa de runtime con .NET 8
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/out .
 

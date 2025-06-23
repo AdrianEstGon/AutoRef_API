@@ -12,12 +12,10 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS runtime
 WORKDIR /app
 
-# Crear un usuario no-root (por ejemplo, UID 10014)
-RUN adduser --uid 10014 --disabled-password --gecos "" appuser
 COPY --from=build /app/out .
 
-# Usar ese usuario
-USER appuser
+# Usar el UID recomendado por Choreo
+USER 10001
 
 # Puerto que tu API usa (ajústalo si es diferente)
 EXPOSE 7187

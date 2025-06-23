@@ -72,7 +72,7 @@ public class UsuariosController : ControllerBase
         var coordenadas = await ObtenerCoordenadas(model.Direccion, model.Ciudad, model.Pais);
 
         // Generar la contraseña
-        var contrasenaGenerada = GenerarContraseña(model.Nombre); // Usa la función para generar la contraseña
+        var contrasenaGenerada = GenerarContrasena(model.Nombre); // Usa la función para generar la contraseña
 
         // Crear el objeto Usuario
         var user = new Usuario
@@ -119,7 +119,7 @@ public class UsuariosController : ControllerBase
     }
 
     // Función para generar una contraseña aleatoria (con símbolos, letras y números)
-    private string GenerarContraseña(string nombre)
+    private string GenerarContrasena(string nombre)
     {
         var random = new Random();
         var longitud = 12; // Longitud de la contraseña

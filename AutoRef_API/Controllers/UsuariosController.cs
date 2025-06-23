@@ -1,13 +1,15 @@
 using AutoRef_API.Database;
 using AutoRef_API.Services;
 
-using CloudinaryDotNet.Actions;
 using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 using Newtonsoft.Json;
@@ -22,7 +24,6 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -34,13 +35,14 @@ public class UsuariosController : ControllerBase
     private readonly HttpClient _httpClient;
     private readonly Cloudinary _cloudinary;
     private readonly AppDataBase _context;
+    private readonly IConfiguration _configuration;
     private const string GoogleMapsApiKey = "AIzaSyC24LaFVU6RgtEswKeAvrryUFBg7CBgONQ"; 
 
     public UsuariosController(
         UserManager<Usuario> userManager,
         RoleManager<ApplicationRole> roleManager,
         SignInManager<Usuario> signInManager,
-        Cloudinary cloudinary, AppDataBase context)
+        Cloudinary cloudinary, AppDataBase context, IConfiguration configuration)
     {
         _userManager = userManager;
         _roleManager = roleManager;
@@ -48,6 +50,7 @@ public class UsuariosController : ControllerBase
         _httpClient = new HttpClient();
         _cloudinary = cloudinary;
         _context = context;
+        _configuration = configuration;
     }
 
     [HttpPost("register")]
@@ -527,23 +530,22 @@ public class UsuariosController : ControllerBase
     private string GenerateJwtToken(Usuario user, IList<string> roles)
     {
         var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, user.UserName),
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Email, user.Email)
-        };
-
+    {
+        new Claim(ClaimTypes.Name, user.UserName),
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Email, user.Email)
+    };
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("TuClaveSecretaQueEsLoSuficientementeLargaParaCumplirConLosRequisitosDeHS256"));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: "TuIssuer",
-            audience: "TuAudience",
+            issuer: _configuration["Jwt:Issuer"],
+            audience: _configuration["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.Now.AddHours(12),
-            signingCredentials: credentials
+            expires: DateTime.UtcNow.AddHours(12),
+            signingCredentials: creds
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);

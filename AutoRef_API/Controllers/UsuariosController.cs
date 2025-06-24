@@ -440,7 +440,13 @@ public class UsuariosController : ControllerBase
     [HttpPut("change-password")]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordModel model)
     {
-        var user = await _userManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        if (model.UserId == null)
+        {
+            return BadRequest(new { message = "El ID de usuario es obligatorio" });
+        }
+
+        var user = await _userManager.FindByIdAsync(model.UserId.ToString());
+
         if (user == null)
         {
             return NotFound(new { message = "Usuario no encontrado" });

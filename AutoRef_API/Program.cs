@@ -34,26 +34,24 @@ builder.Services.AddIdentity<Usuario, ApplicationRole>()
     .AddDefaultTokenProviders();
 
 
-var jwtSection = builder.Configuration.GetSection("Jwt");
-var key = jwtSection["Key"];
-var issuer = jwtSection["Issuer"];
-var audience = jwtSection["Audience"];
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = issuer,
-            ValidAudience = audience,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
-        };
-    });
-
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = "TuIssuer",
+        ValidAudience = "TuAudience",
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("TuClaveSecretaQueEsLoSuficientementeLargaParaCumplirConLosRequisitosDeHS256"))
+    };
+});
 // Configura Swagger
 builder.Services.AddSwaggerGen(c =>
 {
@@ -87,9 +85,8 @@ app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
-    c.RoutePrefix = "swagger"; // ✅ Choreo ahora puede ver el JSON de Swagger
+    c.RoutePrefix = string.Empty; // Para que Swagger UI esté en la raíz
 });
-
 
 app.UseRouting();
 
@@ -114,4 +111,4 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-app.Run("http://0.0.0.0:8080");
+app.Run();

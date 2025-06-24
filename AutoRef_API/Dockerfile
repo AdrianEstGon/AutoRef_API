@@ -14,7 +14,7 @@ COPY --from=build /app/out .
 USER 10001
 
 # Puerto que tu API usa (ajústalo si es diferente)
-EXPOSE 7187
+EXPOSE 8080
 
 # Comando de inicio
 ENTRYPOINT ["dotnet", "AutoRef_API.dll"]

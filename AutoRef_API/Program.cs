@@ -1,4 +1,4 @@
-using AutoRef_API.Database;
+ï»¿using AutoRef_API.Database;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -24,7 +24,7 @@ var cloudinary = new Cloudinary(cloudinaryAccount);
 
 builder.Services.AddSingleton(cloudinary);
 
-// Configura la conexión a la base de datos
+// Configura la conexiÃ³n a la base de datos
 builder.Services.AddDbContext<AppDataBase>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -61,7 +61,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         Version = "v1",
         Title = "API",
-        Description = "Descripción de tu API"
+        Description = "DescripciÃ³n de tu API"
     });
 });
 builder.Services.AddCors(options =>
@@ -87,17 +87,18 @@ app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
-    c.RoutePrefix = string.Empty; // Para que Swagger UI esté en la raíz
+    c.RoutePrefix = "swagger"; // âœ… Choreo ahora puede ver el JSON de Swagger
 });
+
 
 app.UseRouting();
 
-app.UseAuthentication();  // Añadir autenticación
-app.UseAuthorization();   // Añadir autorización
+app.UseAuthentication();  // AÃ±adir autenticaciÃ³n
+app.UseAuthorization();   // AÃ±adir autorizaciÃ³n
 
 app.MapControllers();
 
-// Configuración de Identity y la base de datos
+// ConfiguraciÃ³n de Identity y la base de datos
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;

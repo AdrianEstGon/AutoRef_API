@@ -25,7 +25,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-[Authorize]
+
 [Route("api/[controller]")]
 [ApiController]
 public class UsuariosController : ControllerBase
@@ -54,6 +54,7 @@ public class UsuariosController : ControllerBase
         _configuration = configuration;
     }
 
+    [Authorize]
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterModel model)
     {

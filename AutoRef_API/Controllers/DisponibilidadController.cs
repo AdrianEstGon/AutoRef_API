@@ -10,6 +10,7 @@ using AutoRef_API.Models;
 
 namespace AutoRef_API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class DisponibilidadController : ControllerBase

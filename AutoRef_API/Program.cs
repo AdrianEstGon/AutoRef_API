@@ -71,7 +71,7 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
-app.UseCors("AllowFrontend");
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -89,6 +89,8 @@ app.UseSwaggerUI(c =>
 });
 
 app.UseRouting();
+
+app.UseCors("AllowFrontend");
 
 app.UseAuthentication();  // Añadir autenticación
 app.UseAuthorization();   // Añadir autorización

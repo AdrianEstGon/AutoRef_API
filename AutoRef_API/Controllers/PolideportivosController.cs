@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace AutoRef_API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PolideportivosController : ControllerBase

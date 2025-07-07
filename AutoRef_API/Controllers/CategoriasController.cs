@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace AutoRef_API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriasController : ControllerBase
@@ -17,7 +18,6 @@ namespace AutoRef_API.Controllers
         }
 
         // GET: api/Categorias
-        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetCategorias()
         {

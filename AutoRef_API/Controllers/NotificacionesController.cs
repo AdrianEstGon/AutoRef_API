@@ -12,6 +12,7 @@ using AutoRef_API.Migrations;
 
 namespace AutoRef_API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class NotificacionesController : ControllerBase

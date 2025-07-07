@@ -25,6 +25,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class UsuariosController : ControllerBase

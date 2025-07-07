@@ -9,6 +9,7 @@
     using AutoRef_API.Database;
     using Microsoft.AspNetCore.Authorization;
 
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class EquiposController : ControllerBase

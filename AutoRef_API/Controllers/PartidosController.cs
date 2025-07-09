@@ -72,7 +72,6 @@ namespace AutoRef_API.Controllers
             return Ok(partidoList);
         }
 
-        // GET: api/Partidos/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Partido>> GetPartido(Guid id)
         {
@@ -184,7 +183,6 @@ namespace AutoRef_API.Controllers
             if (partido == null)
                 return NotFound(new { message = "El partido no existe." });
 
-            // Guardar valores originales para comparar
             var datosOriginales = new
             {
                 partido.EquipoLocalId,
@@ -197,7 +195,6 @@ namespace AutoRef_API.Controllers
                 partido.NumeroPartido
             };
 
-            // Actualizar datos
             partido.EquipoLocalId = partidoModel.EquipoLocalId;
             partido.EquipoVisitanteId = partidoModel.EquipoVisitanteId;
             partido.Fecha = partidoModel.Fecha;
@@ -213,7 +210,6 @@ namespace AutoRef_API.Controllers
             partido.EstadoArbitro2 = partidoModel.EstadoArbitro2;
             partido.EstadoAnotador = partidoModel.EstadoAnotador;
 
-            // Determinar si hubo cambios relevantes
             bool datosPartidoModificados =
                 datosOriginales.EquipoLocalId != partido.EquipoLocalId ||
                 datosOriginales.EquipoVisitanteId != partido.EquipoVisitanteId ||
@@ -228,7 +224,6 @@ namespace AutoRef_API.Controllers
 
             if (datosPartidoModificados)
             {
-                // Volver a cargar con relaciones
                 partido = await _context.Partidos
                     .Include(p => p.Lugar)
                     .Include(p => p.Categoria)
@@ -239,7 +234,6 @@ namespace AutoRef_API.Controllers
                     .Include(p => p.Anotador)
                     .FirstOrDefaultAsync(p => p.Id == id);
 
-                // Notificar
                 async Task NotificarCambio(Usuario usuario, Partido partido)
                 {
                     if (usuario?.Email != null)
@@ -318,11 +312,11 @@ namespace AutoRef_API.Controllers
             var partido = new Partido
             {
                 LugarId = partidoModel.LugarId,
-                Arbitro1Id = null,  // Asignar null a los árbitros
-                Arbitro2Id = null,  // Asignar null a los árbitros
-                AnotadorId = null,  // Asignar null al anotador si es necesario
-                Fecha = fechaHoraPartido,  // Combinar fecha y hora en DateTime
-                Hora = horaPartido, // Solo la hora como TimeSpan
+                Arbitro1Id = null,  
+                Arbitro2Id = null,  
+                AnotadorId = null,  
+                Fecha = fechaHoraPartido,  
+                Hora = horaPartido, 
                 EquipoLocalId = partidoModel.EquipoLocalId,
                 EquipoVisitanteId = partidoModel.EquipoVisitanteId,
                 CategoriaId = partidoModel.CategoriaId,
@@ -387,7 +381,7 @@ namespace AutoRef_API.Controllers
 
 Lamentamos las molestias.";
 
-                // ✉️ Enviar correo
+                // Enviar correo
                 var mailService = new MailService();
                 await mailService.SendEmailAsync(
                     usuario.Email,
@@ -395,7 +389,7 @@ Lamentamos las molestias.";
                     $"Hola {usuario.Nombre},\n\n{mensajeCorreo}\n\nGracias."
                 );
 
-                // 🛎️ Crear notificación en la base de datos
+                // Crear notificación en la base de datos
                 string mensajeNotificacion = $"El partido que se disputaba en la fecha {partido.Fecha:yyyy-MM-dd} a las {partido.Hora} entre los equipos {partido.EquipoLocal?.Nombre ?? "Sin definir"} y {partido.EquipoVisitante?.Nombre ?? "Sin definir"} de la categoría {partido.Categoria?.Nombre ?? "Sin definir"} ha sido cancelado. Revisa tus designaciones.";
 
                 var notificacion = new Notificacion

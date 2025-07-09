@@ -39,7 +39,6 @@ namespace AutoRef_API.Controllers
         }
 
 
-        // GET: api/Polideportivos/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Polideportivo>> GetPolideportivo(Guid id)
         {
@@ -60,8 +59,6 @@ namespace AutoRef_API.Controllers
             {
                 return BadRequest("El nombre no puede estar vacío.");
             }
-
-            // Realizamos la búsqueda insensible a mayúsculas
             var polideportivo = await _context.Polideportivos
                 .Where(p => p.Nombre.ToLower() == name.ToLower())
                 .FirstOrDefaultAsync();
@@ -71,7 +68,6 @@ namespace AutoRef_API.Controllers
                 return NotFound($"No se encontró un polideportivo con el nombre '{name}'.");
             }
 
-            // Devolvemos el polideportivo con los campos relevantes
             var result = new
             {
                 polideportivo.Id,
@@ -84,8 +80,6 @@ namespace AutoRef_API.Controllers
         }
 
 
-
-        // PUT: api/Polideportivos/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPolideportivo(Guid id, Polideportivo polideportivo)
         {
@@ -115,7 +109,6 @@ namespace AutoRef_API.Controllers
             return NoContent();
         }
 
-        // POST: api/Polideportivos
         [HttpPost]
         public async Task<ActionResult<Polideportivo>> PostPolideportivo(Polideportivo polideportivo)
         {
@@ -125,7 +118,7 @@ namespace AutoRef_API.Controllers
             return CreatedAtAction("GetPolideportivo", new { id = polideportivo.Id }, polideportivo);
         }
 
-        // DELETE: api/Polideportivos/5
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePolideportivo(Guid id)
         {

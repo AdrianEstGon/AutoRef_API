@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.SqlServer.Types;  // Necesario para SqlGeography
+using Microsoft.SqlServer.Types;  
 
 namespace AutoRef_API.Database;
 
@@ -26,17 +26,15 @@ public class Usuario : IdentityUser<Guid>
     public string? Region { get; set; }
     public string? Ciudad { get; set; }
     public string? CodigoPostal { get; set; }
-    public double Latitud { get; set; }  // Se obtiene con Google Maps API
+    public double Latitud { get; set; }  
     public double Longitud { get; set; }
-    // Propiedad para la foto de perfil (almacenada como un array de bytes)
+
     public string? FotoPerfil { get; set; }
 
-    // Propiedad para la ubicación (tipo GEOGRAPHY)
     public SqlGeography Ubicacion
     {
         get
         {
-            // Convertimos las coordenadas en un objeto SqlGeography
             return SqlGeography.Point(Latitud, Longitud, 4326); // SRID 4326 es el sistema de coordenadas geográficas WGS 84
         }
     }

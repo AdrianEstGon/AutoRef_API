@@ -14,7 +14,6 @@ public class Polideportivo
     {
         get
         {
-            // Convertimos las coordenadas en un objeto SqlGeography
             return SqlGeography.Point(Latitud, Longitud, 4326); // SRID 4326 es el sistema de coordenadas geográficas WGS 84
         }
     }

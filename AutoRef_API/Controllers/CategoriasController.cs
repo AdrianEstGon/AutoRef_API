@@ -17,7 +17,6 @@ namespace AutoRef_API.Controllers
             _context = context;
         }
 
-        // GET: api/Categorias
         [HttpGet]
         public async Task<IActionResult> GetCategorias()
         {
@@ -41,7 +40,6 @@ namespace AutoRef_API.Controllers
             return Ok(categoriasList);
         }
 
-        // GET: api/Categorias/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Categoria>> GetCategoria(Guid id)
         {
@@ -55,7 +53,6 @@ namespace AutoRef_API.Controllers
             return categoria;
         }
 
-        // GET: api/Categorias/name/{name}
         [HttpGet("name/{name}")]
         public async Task<IActionResult> GetCategoriaByName(string name)
         {
@@ -83,7 +80,6 @@ namespace AutoRef_API.Controllers
             return Ok(result);
         }
 
-        // PUT: api/Categorias/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCategoria(Guid id, Categoria categoria)
         {
@@ -113,7 +109,6 @@ namespace AutoRef_API.Controllers
             return NoContent();
         }
 
-        // POST: api/Categorias
         [HttpPost]
         public async Task<ActionResult<Categoria>> PostCategoria(Categoria categoria)
         {
@@ -123,7 +118,6 @@ namespace AutoRef_API.Controllers
             return CreatedAtAction("GetCategoria", new { id = categoria.Id }, categoria);
         }
 
-        // DELETE: api/Categorias/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategoria(Guid id)
         {

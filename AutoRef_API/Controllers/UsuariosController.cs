@@ -77,9 +77,8 @@ public class UsuariosController : ControllerBase
         var coordenadas = await ObtenerCoordenadas(model.Direccion, model.Ciudad, model.Pais);
 
         // Generar la contraseña
-        var contrasenaGenerada = GenerarContrasena(model.Nombre); // Usa la función para generar la contraseña
+        var contrasenaGenerada = GenerarContrasena(model.Nombre); 
 
-        // Crear el objeto Usuario
         var user = new Usuario
         {
             UserName = model.Username,
@@ -137,13 +136,11 @@ public class UsuariosController : ControllerBase
         contrasena.Append('1'); // Garantizar que haya un número
         contrasena.Append('!'); // Garantizar que haya un símbolo
 
-        // Generar el resto de la contraseña
         for (int i = contrasena.Length; i < longitud; i++)
         {
             contrasena.Append(caracteres[random.Next(caracteres.Length)]);
         }
 
-        // Barajar la contraseña para que no siempre sea en el mismo orden
         var contrasenaFinal = contrasena.ToString().ToCharArray();
         random.Shuffle(contrasenaFinal);
 
@@ -174,9 +171,6 @@ public class UsuariosController : ControllerBase
         return (0, 0);
     }
 
-    /// <summary>
-    /// Inicia sesión y devuelve un token JWT.
-    /// </summary>
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
@@ -204,9 +198,6 @@ public class UsuariosController : ControllerBase
         });
     }
 
-    /// <summary>
-    /// Crea un nuevo rol en el sistema.
-    /// </summary>
     [Authorize(Roles = "Admin")]
     [HttpPost("create-role")]
     public async Task<IActionResult> CreateRole([FromBody] RoleModel model)
@@ -331,7 +322,7 @@ public class UsuariosController : ControllerBase
             return NotFound(new { message = "Usuario no encontrado" });
         }
 
-        var userGuid = Guid.Parse(id); // o Guid.TryParse para mayor seguridad
+        var userGuid = Guid.Parse(id); 
 
         // 1. Eliminar disponibilidades
         var disponibilidades = await _context.Disponibilidades
@@ -354,10 +345,9 @@ public class UsuariosController : ControllerBase
             if (partido.AnotadorId == userGuid) partido.AnotadorId = null;
         }
 
-        // Guardar cambios hasta aquí (disponibilidades y partidos)
         await _context.SaveChangesAsync();
 
-        // 3. Remover roles asignados al usuario
+        // 3. Eliminar roles asignados al usuario
         var roles = await _userManager.GetRolesAsync(user);
         foreach (var role in roles)
         {
@@ -461,7 +451,6 @@ public class UsuariosController : ControllerBase
             return Ok(new { message = "Contraseña actualizada con éxito" });
         }
 
-        // Aquí puedes devolver un mensaje de error específico si la contraseña actual es incorrecta
         if (result.Errors.Any(e => e.Code == "PasswordMismatch"))
         {
             return BadRequest(new { message = "La contraseña actual no es correcta" });

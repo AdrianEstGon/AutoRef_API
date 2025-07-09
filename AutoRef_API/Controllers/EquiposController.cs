@@ -21,7 +21,6 @@
             _context = context;
         }
 
-        // GET: api/Equipos
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetEquipos()
@@ -43,7 +42,6 @@
             return Ok(equiposList);
         }
 
-        // GET: api/Equipos/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Equipo>> GetEquipo(Guid id)
         {
@@ -57,7 +55,6 @@
             return equipo;
         }
 
-        // GET: api/Equipos/name/{name}
         [HttpGet("name/{name}")]
         public async Task<IActionResult> GetEquipoByName(string name)
         {
@@ -80,7 +77,6 @@
 
 
 
-        // GET: api/Equipos/categoria/{categoriaId}
         [HttpGet("categoria/{categoriaId}")]
         public async Task<IActionResult> GetEquiposByCategoria(Guid categoriaId)
         {
@@ -88,7 +84,6 @@
                 .Where(e => e.CategoriaId == categoriaId)
                 .ToListAsync();
 
-            // Devolver lista vacía si no hay equipos en lugar de NotFound
             var equiposList = equipos.Select(e => new
             {
                 e.Id,
@@ -97,10 +92,9 @@
                 e.CategoriaId
             }).ToList();
 
-            return Ok(equiposList); // Siempre devolver una respuesta Ok con una lista vacía si no hay equipos
+            return Ok(equiposList); 
         }
 
-        // GET: api/Equipos/search?name=NombreEquipo&categoriaId=CategoriaId
         [HttpGet("name/{name}/categoria/{categoria}")]
         public async Task<IActionResult> GetEquipoByNameAndCategoria(string name, string categoria)
         {
@@ -110,13 +104,13 @@
             }
 
             var equipo = await _context.Equipos
-                .Include(e => e.Categoria) // Incluye la navegación a la categoría si tienes la relación configurada
+                .Include(e => e.Categoria) 
                 .Where(e => e.Nombre.ToLower() == name.ToLower() && e.Categoria.Nombre.ToLower() == categoria.ToLower())
                 .FirstOrDefaultAsync();
 
             if (equipo == null)
             {
-                return Ok(new { }); // Devuelve un objeto vacío si no existe
+                return Ok(new { });
             }
 
             return Ok(new
@@ -128,9 +122,6 @@
             });
         }
 
-
-
-        // PUT: api/Equipos/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutEquipo(Guid id, Equipo equipo)
         {
@@ -160,7 +151,6 @@
             return NoContent();
         }
 
-        // POST: api/Equipos
         [HttpPost]
         public async Task<ActionResult<Equipo>> PostEquipo(Equipo equipo)
         {
@@ -170,7 +160,6 @@
             return CreatedAtAction("GetEquipo", new { id = equipo.Id }, equipo);
         }
 
-        // DELETE: api/Equipos/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEquipo(Guid id)
         {

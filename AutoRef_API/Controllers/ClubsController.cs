@@ -18,7 +18,6 @@ namespace AutoRef_API.Controllers
             _context = context;
         }
 
-        // GET: api/Clubs
         [HttpGet]
         public async Task<IActionResult> GetClubs()
         {
@@ -37,7 +36,6 @@ namespace AutoRef_API.Controllers
             return Ok(clubsList);
         }
 
-        // GET: api/Clubs/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Club>> GetClub(Guid id)
         {

@@ -24,7 +24,6 @@ namespace AutoRef_API.Controllers
             _context = context;
         }
 
-        // GET: api/Notificaciones
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetNotificaciones()
@@ -45,7 +44,6 @@ namespace AutoRef_API.Controllers
             return Ok(result);
         }
 
-        // GET: api/Notificaciones/usuario/{usuarioId}
         [Authorize]
         [HttpGet("usuario/{usuarioId}")]
         public async Task<IActionResult> GetNotificacionesPorUsuario(Guid usuarioId)
@@ -67,7 +65,6 @@ namespace AutoRef_API.Controllers
             return Ok(result);
         }
 
-        // GET: api/Notificaciones/5
         [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<Notificacion>> GetNotificacion(Guid id)
@@ -123,7 +120,6 @@ namespace AutoRef_API.Controllers
             return Ok(new { message = "Notificacion creada con éxito" });
         }
 
-        // PUT: api/Notificaciones/5
         [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutNotificacion(Guid id, UpdateNotificacionModel notificacion)
@@ -145,13 +141,11 @@ namespace AutoRef_API.Controllers
 
             try
             {
-                // Marcar la entidad como modificada y guardar los cambios en la base de datos
                 _context.Entry(existingNotificacion).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                // Si hay problemas de concurrencia (por ejemplo, la notificación ya fue modificada por otro proceso)
                 if (!NotificacionExists(id))
                 {
                     return NotFound();
@@ -162,13 +156,11 @@ namespace AutoRef_API.Controllers
                 }
             }
 
-            // Retornar 204 No Content indicando que la actualización fue exitosa
+            // Devuelve 204 No Content indicando que la actualización fue exitosa
             return NoContent();
         }
 
 
-
-        // DELETE: api/Notificaciones/5
         [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteNotificacion(Guid id)
@@ -177,7 +169,6 @@ namespace AutoRef_API.Controllers
 
             if (notificacion == null)
             {
-                // Ya fue eliminada
                 return Ok(new { message = "La notificación ya fue eliminada." });
             }
 
@@ -188,7 +179,6 @@ namespace AutoRef_API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                // Algo la eliminó entre FindAsync y SaveChangesAsync, tratamos como éxito
                 return Ok(new { message = "La notificación ya no existía al intentar eliminarla." });
             }
 

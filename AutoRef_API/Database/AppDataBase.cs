@@ -24,7 +24,7 @@ namespace AutoRef_API.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder); // Asegura la configuración de Identity
+            base.OnModelCreating(modelBuilder); 
 
             // Configurar claves GUID
             modelBuilder.Entity<Usuario>().Property(u => u.Id).HasDefaultValueSql("NEWSEQUENTIALID()");

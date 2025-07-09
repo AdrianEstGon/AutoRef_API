@@ -43,7 +43,7 @@ public class UpdateModel
     public double Latitud { get; set; }
     public double Longitud { get; set; }
     public string? FotoPerfil { get; set; }
-    public bool EsAdmin { get; set; } // Para indicar si el usuario debe tener rol Admin
+    public bool EsAdmin { get; set; } 
 }
 
 public class ChangePasswordModel

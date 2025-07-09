@@ -22,7 +22,6 @@ namespace AutoRef_API.Controllers
             _context = context;
         }
 
-        // GET: api/Disponibilidad
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetDisponibilidades()
@@ -46,7 +45,6 @@ namespace AutoRef_API.Controllers
             return Ok(disponibilidadList);
         }
 
-        // GET: api/Disponibilidad/5
         [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDisponibilidad(Guid id)
@@ -75,7 +73,6 @@ namespace AutoRef_API.Controllers
             return Ok(result);
         }
 
-        // GET: api/Disponibilidad/{usuarioId}/{fecha}
         [HttpGet("{usuarioId}/{fecha}")]
         public async Task<IActionResult> GetDisponibilidadByUserAndDate(Guid usuarioId, DateTime fecha)
         {
@@ -90,8 +87,6 @@ namespace AutoRef_API.Controllers
             return Ok(disponibilidad);
         }
 
-
-        // POST: api/Disponibilidad
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> PostDisponibilidad([FromBody] DisponibilidadModel disponibilidadModel)
@@ -118,7 +113,6 @@ namespace AutoRef_API.Controllers
             return Ok(new { message = "Disponibilidad creada con éxito.", disponibilidad });
         }
 
-        // PUT: api/Disponibilidad/5
         [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDisponibilidad(Guid id, [FromBody] DisponibilidadModel disponibilidadModel)
@@ -134,7 +128,6 @@ namespace AutoRef_API.Controllers
                 return NotFound(new { message = "Disponibilidad no encontrada." });
             }
 
-            // Actualizar los campos
             disponibilidadExistente.Fecha = disponibilidadModel.Fecha;
             disponibilidadExistente.Franja1 = disponibilidadModel.Franja1;
             disponibilidadExistente.Franja2 = disponibilidadModel.Franja2;

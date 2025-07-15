@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 using Newtonsoft.Json;
@@ -37,13 +38,16 @@ public class UsuariosController : ControllerBase
     private readonly Cloudinary _cloudinary;
     private readonly AppDataBase _context;
     private readonly IConfiguration _configuration;
-    private const string GoogleMapsApiKey = "AIzaSyC24LaFVU6RgtEswKeAvrryUFBg7CBgONQ"; 
+    private readonly GoogleMapsSettings _googleMapsSettings;
+    private readonly MailService _mailService;
 
     public UsuariosController(
         UserManager<Usuario> userManager,
         RoleManager<ApplicationRole> roleManager,
         SignInManager<Usuario> signInManager,
-        Cloudinary cloudinary, AppDataBase context, IConfiguration configuration)
+        Cloudinary cloudinary, AppDataBase context, IConfiguration configuration,
+        IOptions<GoogleMapsSettings> googleMapsSettings,
+        MailService mailService)
     {
         _userManager = userManager;
         _roleManager = roleManager;
@@ -52,6 +56,8 @@ public class UsuariosController : ControllerBase
         _cloudinary = cloudinary;
         _context = context;
         _configuration = configuration;
+        _googleMapsSettings = googleMapsSettings.Value;
+        _mailService = mailService;
     }
 
     [Authorize]
@@ -104,16 +110,15 @@ public class UsuariosController : ControllerBase
 
         if (result.Succeeded)
         {
-            // Enviar la contraseña por correo
-            var mailService = new MailService();  // Crear instancia del servicio de correo
-            await mailService.SendEmailAsync(model.Email, "Tu nueva contraseña", $"Hola {model.Nombre},\n\nTu nueva contraseña es: {contrasenaGenerada}\n\nSaludos!");
+            await _mailService.SendEmailAsync(model.Email, "Tu nueva contraseña",
+     $"Hola {model.Nombre},\n\nTu nueva contraseña es: {contrasenaGenerada}\n\n" +
+     "Por motivos de seguridad, te recomendamos cambiar tu contraseña desde tu perfil después de iniciar sesión.\n\nSaludos!");
 
-            // Asigna "Admin" si EsAdmin es true
+
             if (model.EsAdmin)
             {
-                var role = "Admin";
-                await _userManager.AddToRoleAsync(user, role);
-                return Ok(new { message = "Usuario registrado con éxito", role });
+                await _userManager.AddToRoleAsync(user, "Admin");
+                return Ok(new { message = "Usuario registrado con éxito", role = "Admin" });
             }
 
             return Ok(new { message = "Usuario registrado con éxito" });
@@ -152,7 +157,7 @@ public class UsuariosController : ControllerBase
     private async Task<(double Latitud, double Longitud)> ObtenerCoordenadas(string direccion, string ciudad, string pais)
     {
         var direccionCompleta = $"{direccion}, {ciudad}, {pais}";
-        var url = $"https://maps.googleapis.com/maps/api/geocode/json?address={Uri.EscapeDataString(direccionCompleta)}&key={GoogleMapsApiKey}";
+        var url = $"https://maps.googleapis.com/maps/api/geocode/json?address={Uri.EscapeDataString(direccionCompleta)}&key={_googleMapsSettings.ApiKey}";
 
         var response = await _httpClient.GetAsync(url);
         if (!response.IsSuccessStatusCode)

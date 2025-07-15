@@ -1,11 +1,14 @@
 ﻿using AutoRef_API.Database;
+using AutoRef_API.Services;
+
+using CloudinaryDotNet;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using CloudinaryDotNet;
+
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,6 +23,9 @@ var cloudinaryAccount = new Account(
 );
 
 var cloudinary = new Cloudinary(cloudinaryAccount);
+
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+builder.Services.Configure<GoogleMapsSettings>(builder.Configuration.GetSection("GoogleMaps"));
 
 builder.Services.AddSingleton(cloudinary);
 

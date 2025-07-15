@@ -1,21 +1,25 @@
 ﻿namespace AutoRef_API.Services;
 using MailKit.Net.Smtp;
 
+using Microsoft.Extensions.Options;
+
 using MimeKit;
 
 using System.Threading.Tasks;
 
 public class MailService
 {
-    private readonly string _smtpServer = "smtp.gmail.com"; // Cambia por tu servidor SMTP
-    private readonly int _smtpPort = 587; // Usualmente 587 para SMTP
-    private readonly string _smtpUsername = "autorefasturias@gmail.com"; // Tu correo de envío
-    private readonly string _smtpPassword = "parmqbpwxhjykkww"; // Tu contraseña de correo
+    private readonly MailSettings _mailSettings;
+
+    public MailService(IOptions<MailSettings> mailSettings)
+    {
+        _mailSettings = mailSettings.Value;
+    }
 
     public async Task SendEmailAsync(string toEmail, string subject, string body)
     {
         var message = new MimeMessage();
-        message.From.Add(new MailboxAddress("AutoRef", _smtpUsername));
+        message.From.Add(new MailboxAddress("AutoRef", _mailSettings.SmtpUsername));
         message.To.Add(new MailboxAddress("User", toEmail));
         message.Subject = subject;
 
@@ -23,8 +27,8 @@ public class MailService
 
         using (var client = new SmtpClient())
         {
-            await client.ConnectAsync(_smtpServer, _smtpPort, false);
-            await client.AuthenticateAsync(_smtpUsername, _smtpPassword);
+            await client.ConnectAsync(_mailSettings.SmtpServer, _mailSettings.SmtpPort, false);
+            await client.AuthenticateAsync(_mailSettings.SmtpUsername, _mailSettings.SmtpPassword);
             await client.SendAsync(message);
             await client.DisconnectAsync(true);
         }

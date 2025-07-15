@@ -19,10 +19,12 @@ namespace AutoRef_API.Controllers
     public class PartidosController : ControllerBase
     {
         private readonly AppDataBase _context;
+        private readonly MailService _mailService;
 
-        public PartidosController(AppDataBase context)
+        public PartidosController(AppDataBase context, MailService mailService)
         {
             _context = context;
+            _mailService = mailService;
         }
 
         // GET: api/Partidos
@@ -256,8 +258,8 @@ namespace AutoRef_API.Controllers
                             $"- Anotador: {GetNombreCompleto(partido.Anotador)}\n\n" +
                             "Revisa tus designaciones para más información.";
 
-                        var mailService = new MailService();
-                        await mailService.SendEmailAsync(
+       
+                        await _mailService.SendEmailAsync(
                             usuario.Email,
                             "Modificación en un partido asignado",
                             $"Hola {usuario.Nombre},\n\n{mensajeCorreo}\n\nGracias."
@@ -382,8 +384,7 @@ namespace AutoRef_API.Controllers
 Lamentamos las molestias.";
 
                 // Enviar correo
-                var mailService = new MailService();
-                await mailService.SendEmailAsync(
+                await _mailService.SendEmailAsync(
                     usuario.Email,
                     "Cancelación de partido asignado",
                     $"Hola {usuario.Nombre},\n\n{mensajeCorreo}\n\nGracias."

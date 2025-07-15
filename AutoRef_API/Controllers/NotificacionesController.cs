@@ -18,10 +18,12 @@ namespace AutoRef_API.Controllers
     public class NotificacionesController : ControllerBase
     {
         private readonly AppDataBase _context;
+        private readonly MailService _mailService;
 
-        public NotificacionesController(AppDataBase context)
+        public NotificacionesController(AppDataBase context, MailService mailService)
         {
             _context = context;
+            _mailService = mailService;
         }
 
         [Authorize]
@@ -106,8 +108,7 @@ namespace AutoRef_API.Controllers
             }
             try
             {
-                var mailService = new MailService();
-                await mailService.SendEmailAsync(user.Email, "Nueva designación", $"Hola {user.Nombre},\n\n{notificacion.Mensaje}\n\n¡Saludos!");
+                await _mailService.SendEmailAsync(user.Email, "Nueva designación", $"Hola {user.Nombre},\n\n{notificacion.Mensaje}\n\n¡Saludos!");
             }
             catch (Exception ex)
             {
